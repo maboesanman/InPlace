@@ -83,8 +83,7 @@ where
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
     T: RenewableVacantEntry<'a, K, V, I>,
 {
-    fn get_new_entry(self, k: K) -> Entry<'a, K, V, I>
-    {
+    fn get_new_entry(self, k: K) -> Entry<'a, K, V, I> {
         self.get_new_entry_old_key(k).0
     }
 }
