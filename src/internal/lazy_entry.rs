@@ -1,4 +1,6 @@
-use crate::{Entry, InPlace};
+use super::{in_place::InPlace, entry::Entry};
+
+
 
 pub enum LazyEntry<'a, K, V, I, Q>
 where

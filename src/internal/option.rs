@@ -1,6 +1,6 @@
 use std::hint::unreachable_unchecked;
 
-use crate::{entry::Entry, InPlace, OccupiedEntry, VacantEntry};
+use super::{entry::Entry, in_place::InPlace, occupied_entry::OccupiedEntry, vacant_entry::VacantEntry};
 
 impl<T> InPlace<(), T> for Option<T> {
     type Occupied<'a>
@@ -13,7 +13,7 @@ impl<T> InPlace<(), T> for Option<T> {
         Self: 'a,
     = OptionVacantEntry<'a, T>;
 
-    fn get_entry<'a, 'q, Q>(&'a mut self, _k: Q) -> crate::entry::Entry<'a, (), T, Self>
+    fn get_entry<'a, 'q, Q>(&'a mut self, _k: Q) -> Entry<'a, (), T, Self>
     where
         Q: ToOwned<Owned = ()>,
     {
@@ -47,7 +47,7 @@ impl<'a, T> OccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry<'a, T> {
         })
     }
 
-    fn remove(self) -> (OptionVacantEntry<'a, T>, T) {
+    fn remove_entry(self) -> (OptionVacantEntry<'a, T>, T) {
         match core::mem::take(self.option) {
             Some(val) => (
                 OptionVacantEntry {
@@ -66,11 +66,11 @@ impl<'a, T> OccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry<'a, T> {
         Entry::Occupied(self)
     }
 
-    fn move_entry<Q>(self, _key: Q) -> (OptionOccupiedEntry<'a, T>, (), Option<T>)
+    fn move_entry<Q>(&mut self, _key: Q) -> ((), Option<T>)
     where
         Q: ToOwned<Owned = ()>,
     {
-        (self, (), None)
+        ((), None)
     }
 }
 
@@ -85,7 +85,7 @@ impl<'a, T> VacantEntry<'a, (), T, Option<T>> for OptionVacantEntry<'a, T> {
 
     fn into_key(self) -> () {}
 
-    fn insert(self, val: T) -> OptionOccupiedEntry<'a, T> {
+    fn insert_entry(self, val: T) -> OptionOccupiedEntry<'a, T> {
         match core::mem::replace(self.option, Some(val)) {
             Some(_) => unsafe { unreachable_unchecked() },
             None => OptionOccupiedEntry {
