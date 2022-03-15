@@ -1,6 +1,5 @@
 use super::in_place::InPlace;
 
-
 /// A trait to extend InPlace, for collections whose keys are ordered.
 pub trait InPlaceOrd<K, V>: InPlace<K, V>
 where
@@ -14,10 +13,9 @@ where
 }
 
 /// A trait to extend both OccupiedEntry and VacantEntry, for collections whose keys are ordered.
-/// 
+///
 /// this trait allows for moving between entries.
 pub trait InPlaceOrdEntry<'a, K: Ord, V, I: InPlace<K, V> + ?Sized + 'a>: Sized {
-
     /// get the entry with the lowest key greater than self.get_key(), or None if there isn't one
     fn get_next_entry(self) -> Option<I::Occupied<'a>>;
 

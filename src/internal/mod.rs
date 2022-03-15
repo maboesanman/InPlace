@@ -5,4 +5,5 @@ pub mod lazy_entry;
 pub mod occupied_entry;
 pub mod option;
 pub mod ord;
+pub mod renewable;
 pub mod vacant_entry;

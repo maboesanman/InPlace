@@ -1,6 +1,12 @@
 use std::hint::unreachable_unchecked;
 
-use super::{entry::Entry, in_place::InPlace, occupied_entry::OccupiedEntry, vacant_entry::VacantEntry};
+use super::{
+    entry::Entry,
+    in_place::InPlace,
+    occupied_entry::OccupiedEntry,
+    renewable::{RenewableOccupiedEntry, RenewableVacantEntry},
+    vacant_entry::VacantEntry,
+};
 
 impl<T> InPlace<(), T> for Option<T> {
     type Occupied<'a>
@@ -58,7 +64,9 @@ impl<'a, T> OccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry<'a, T> {
             None => unsafe { unreachable_unchecked() },
         }
     }
+}
 
+impl<'a, T> RenewableOccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry<'a, T> {
     fn get_new_entry<Q>(self, _k: Q) -> Entry<'a, (), T, Option<T>>
     where
         Q: ToOwned<Owned = ()>,
@@ -93,7 +101,9 @@ impl<'a, T> VacantEntry<'a, (), T, Option<T>> for OptionVacantEntry<'a, T> {
             },
         }
     }
+}
 
+impl<'a, T> RenewableVacantEntry<'a, (), T, Option<T>> for OptionVacantEntry<'a, T> {
     fn get_new_entry_old_key<Q>(self, _k: Q) -> (Entry<'a, (), T, Option<T>>, ())
     where
         Q: ToOwned<Owned = ()>,
