@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+    - name: Install Toolchain
+      run: rustup update nightly && rustup default nightly
     - name: Build the docs
       run: cargo doc
     - name: Deploy 🚀
