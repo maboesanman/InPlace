@@ -1,21 +1,27 @@
+use core::borrow::Borrow;
+
 use super::{entry::Entry, in_place::InPlace};
 
-pub enum LazyEntry<'a, K, V, I, Q>
+pub enum LazyEntry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V> + ?Sized,
-    Q: ToOwned<Owned = K>,
 {
-    ContainerRef(&'a mut I, Q),
+    ContainerRef(&'a mut I, K),
     Entry(Entry<'a, K, V, I>),
     Poisioned,
 }
 
-impl<'a, K, V, I, Q> LazyEntry<'a, K, V, I, Q>
+impl<'a, K, V, I> LazyEntry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V> + ?Sized,
-    Q: ToOwned<Owned = K>,
 {
-    pub fn get_mut(&mut self) -> &mut Entry<'a, K, V, I> {
+    pub fn get_mut<Q>(&mut self) -> &mut Entry<'a, K, V, I>
+    where
+        K: Borrow<Q>,
+        Q: Clone + Eq + ?Sized,
+    {
         match self {
             LazyEntry::ContainerRef(_, _) => {
                 if let LazyEntry::ContainerRef(container, k) =
@@ -39,22 +45,22 @@ where
     }
 }
 
-impl<'a, K, V, I, Q> From<Entry<'a, K, V, I>> for LazyEntry<'a, K, V, I, Q>
+impl<'a, K, V, I> From<Entry<'a, K, V, I>> for LazyEntry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V> + ?Sized,
-    Q: ToOwned<Owned = K>,
 {
     fn from(e: Entry<'a, K, V, I>) -> Self {
         LazyEntry::Entry(e)
     }
 }
 
-impl<'a, K, V, I, Q> From<LazyEntry<'a, K, V, I, Q>> for Entry<'a, K, V, I>
+impl<'a, K, V, I> From<LazyEntry<'a, K, V, I>> for Entry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V> + ?Sized,
-    Q: ToOwned<Owned = K>,
 {
-    fn from(e: LazyEntry<'a, K, V, I, Q>) -> Self {
+    fn from(e: LazyEntry<'a, K, V, I>) -> Self {
         match e {
             LazyEntry::ContainerRef(container, k) => container.get_entry(k),
             LazyEntry::Entry(e) => e,

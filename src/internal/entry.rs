@@ -7,12 +7,20 @@ use super::{
     vacant_entry::VacantEntry,
 };
 
-pub enum Entry<'a, K, V, I: InPlace<K, V> + ?Sized + 'a> {
+pub enum Entry<'a, K, V, I>
+where
+    K: Eq,
+    I: InPlace<K, V> + ?Sized + 'a,
+{
     Occupied(I::Occupied<'a>),
     Vacant(I::Vacant<'a>),
 }
 
-impl<'a, K, V, I: InPlace<K, V> + ?Sized + 'a> Entry<'a, K, V, I> {
+impl<'a, K, V, I> Entry<'a, K, V, I>
+where
+    K: Eq,
+    I: InPlace<K, V> + ?Sized + 'a,
+{
     pub fn get_key(&self) -> &K {
         match self {
             Entry::Occupied(e) => e.get_pair().0,
@@ -87,6 +95,7 @@ impl<'a, K, V, I: InPlace<K, V> + ?Sized + 'a> Entry<'a, K, V, I> {
 
 impl<'a, K, V, I: InPlace<K, V> + ?Sized + 'a> Entry<'a, K, V, I>
 where
+    K: Eq,
     I::Occupied<'a>: RenewableOccupiedEntry<'a, K, V, I>,
     I::Vacant<'a>: RenewableVacantEntry<'a, K, V, I>,
 {

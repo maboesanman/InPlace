@@ -1,47 +1,42 @@
+use std::borrow::Borrow;
+
 use super::{
     entry::Entry, in_place::InPlace, lazy_entry::LazyEntry, occupied_entry::OccupiedEntry,
     renewable::RenewableVacantEntry, vacant_entry::VacantEntry,
 };
 
-pub trait InPlaceExt<K, V>: InPlace<K, V> {
-    fn get_lazy_entry<'a, 'q, Q>(&'a mut self, k: Q) -> LazyEntry<'a, K, V, Self, Q>
-    where
-        Q: ToOwned<Owned = K>;
+pub trait InPlaceExt<K: Eq, V>: InPlace<K, V> {
+    fn get_lazy_entry<'a>(&'a mut self, k: K) -> LazyEntry<'a, K, V, Self>;
 
-    fn insert_entry<'a>(&'a mut self, k: K, v: V) -> (Self::Occupied<'a>, Option<V>)
-    where
-        K: ToOwned<Owned = K>;
+    fn insert_entry<'a>(&'a mut self, k: K, v: V) -> (Self::Occupied<'a>, Option<V>);
 
-    fn remove_entry<'a, 'q, Q>(&'a mut self, k: Q) -> (Self::Vacant<'a>, Option<V>)
+    fn remove_entry<'a, Q>(&'a mut self, k: &Q) -> (Self::Vacant<'a>, Option<V>)
     where
-        Q: ToOwned<Owned = K>;
+        K: Borrow<Q>,
+        Q: Clone + Eq + ?Sized;
 }
 
-impl<K, V, T: InPlace<K, V>> InPlaceExt<K, V> for T {
-    fn get_lazy_entry<'a, 'q, Q>(&'a mut self, k: Q) -> LazyEntry<'a, K, V, Self, Q>
-    where
-        Q: ToOwned<Owned = K>,
-    {
+impl<K: Eq, V, T: InPlace<K, V>> InPlaceExt<K, V> for T {
+    fn get_lazy_entry<'a>(&'a mut self, k: K) -> LazyEntry<'a, K, V, Self> {
         LazyEntry::ContainerRef(self, k)
     }
 
-    fn insert_entry<'a>(&'a mut self, k: K, v: V) -> (Self::Occupied<'a>, Option<V>)
-    where
-        K: ToOwned<Owned = K>,
-    {
+    fn insert_entry<'a>(&'a mut self, k: K, v: V) -> (Self::Occupied<'a>, Option<V>) {
         self.get_entry(k).insert_entry(v)
     }
 
-    fn remove_entry<'a, 'q, Q>(&'a mut self, k: Q) -> (Self::Vacant<'a>, Option<V>)
+    fn remove_entry<'a, Q>(&'a mut self, k: &Q) -> (Self::Vacant<'a>, Option<V>)
     where
-        Q: ToOwned<Owned = K>,
+        K: Borrow<Q>,
+        Q: Clone + Eq + ?Sized,
     {
-        self.get_entry(k).remove_entry()
+        self.get_entry_clone_key(k).remove_entry()
     }
 }
 
 pub trait OccupiedEntryExt<'a, K, V, I>: OccupiedEntry<'a, K, V, I> + Sized
 where
+    K: Eq,
     I: InPlace<K, V, Occupied<'a> = Self> + ?Sized + 'a,
 {
     fn get<'b>(&'b self) -> &'b V
@@ -55,6 +50,7 @@ where
 
 impl<'a, K, V, I, T> OccupiedEntryExt<'a, K, V, I> for T
 where
+    K: Eq,
     I: InPlace<K, V, Occupied<'a> = Self> + ?Sized + 'a,
     T: OccupiedEntry<'a, K, V, I>,
 {
@@ -79,6 +75,7 @@ where
 
 pub trait RenewableVacantEntryExt<'a, K, V, I>: VacantEntry<'a, K, V, I> + Sized
 where
+    K: Eq,
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
 {
     fn get_new_entry<Q>(self, k: Q) -> Entry<'a, K, V, I>
@@ -88,6 +85,7 @@ where
 
 impl<'a, K, V, I, T> RenewableVacantEntryExt<'a, K, V, I> for T
 where
+    K: Eq,
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
     T: RenewableVacantEntry<'a, K, V, I>,
 {

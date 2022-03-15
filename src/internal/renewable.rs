@@ -7,6 +7,7 @@ use super::{entry::Entry, in_place::InPlace};
 /// this can be thought of as holding a `&K`, and a `&mut V` into the collection.
 pub trait RenewableOccupiedEntry<'a, K, V, I>: OccupiedEntry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V, Occupied<'a> = Self> + ?Sized + 'a,
 {
     /// get a completely new entry, as if from calling get_entry on the
@@ -34,6 +35,7 @@ where
 /// so inserting shouldn't be a huge penalty at this point.
 pub trait RenewableVacantEntry<'a, K, V, I>: VacantEntry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
 {
     /// get a completely new entry, as if from calling get_entry on the

@@ -1,4 +1,4 @@
-use std::hint::unreachable_unchecked;
+use core::hint::unreachable_unchecked;
 
 use super::{
     entry::Entry,
@@ -19,14 +19,19 @@ impl<T> InPlace<(), T> for Option<T> {
         Self: 'a,
     = OptionVacantEntry<'a, T>;
 
-    fn get_entry<'a, 'q, Q>(&'a mut self, _k: Q) -> Entry<'a, (), T, Self>
-    where
-        Q: ToOwned<Owned = ()>,
-    {
+    fn get_entry<'a>(&'a mut self, _k: ()) -> Entry<'a, (), T, Self> {
         match self {
             Some(_) => Entry::Occupied(OptionOccupiedEntry { option: self }),
             None => Entry::Vacant(OptionVacantEntry { option: self }),
         }
+    }
+
+    fn get_entry_clone_key<'a, Q>(&'a mut self, k: &Q) -> Entry<'a, (), T, Self>
+    where
+        (): std::borrow::Borrow<Q>,
+        Q: Clone + Eq + ?Sized,
+    {
+        self.get_entry(())
     }
 }
 

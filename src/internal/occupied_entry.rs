@@ -5,6 +5,7 @@ use super::in_place::InPlace;
 /// this can be thought of as holding a `&K`, and a `&mut V` into the collection.
 pub trait OccupiedEntry<'a, K, V, I>: Sized
 where
+    K: Eq,
     I: InPlace<K, V, Occupied<'a> = Self> + ?Sized + 'a,
 {
     /// get the key value pair, immutably borrowed
@@ -46,6 +47,7 @@ where
 /// They are only able to do so through a `replace_key` function, not a regular mutable reference.
 pub trait OccupiedEntryKeyMut<'a, K, V, I>: OccupiedEntry<'a, K, V, I>
 where
+    K: Eq,
     I: InPlace<K, V, Occupied<'a> = Self> + ?Sized + 'a,
 {
     /// replace key with another one.

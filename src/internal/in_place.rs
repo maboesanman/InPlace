@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use super::{entry::Entry, occupied_entry::OccupiedEntry, vacant_entry::VacantEntry};
 
 /// A trait for in-place modification of collections.
@@ -12,7 +14,7 @@ use super::{entry::Entry, occupied_entry::OccupiedEntry, vacant_entry::VacantEnt
 ///
 /// you are able to flip flop as much as you like without having to re-query the collection, or
 /// unwrap values you know are present.
-pub trait InPlace<K, V> {
+pub trait InPlace<K: Eq, V> {
     /// An occupied entry. This is a handle to read and modify an item which is
     /// currently in your collection. The key should be thought of as immutably borrowed,
     /// and the value should be thought of as mutably borrowed.
@@ -37,7 +39,15 @@ pub trait InPlace<K, V> {
     /// the entry can be thought of as "preserving the work you did to search",
     /// so you can insert and remove to your heart's content without re-traversing the
     /// internal data structure, or unwrapping values you know you inserted.
-    fn get_entry<'a, Q>(&'a mut self, k: Q) -> Entry<'a, K, V, Self>
+    fn get_entry<'a>(&'a mut self, k: K) -> Entry<'a, K, V, Self>;
+
+    /// get the entry for k, whether vacant or occupied.
+    ///
+    /// the entry can be thought of as "preserving the work you did to search",
+    /// so you can insert and remove to your heart's content without re-traversing the
+    /// internal data structure, or unwrapping values you know you inserted.
+    fn get_entry_clone_key<'a, Q>(&'a mut self, k: &Q) -> Entry<'a, K, V, Self>
     where
-        Q: ToOwned<Owned = K>;
+        K: Borrow<Q>,
+        Q: Clone + Eq + ?Sized;
 }

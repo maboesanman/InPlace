@@ -8,6 +8,7 @@ use super::in_place::InPlace;
 /// so inserting shouldn't be a huge penalty at this point.
 pub trait VacantEntry<'a, K, V, I>: Sized
 where
+    K: Eq,
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
 {
     /// Get a reference to the key an item will be inserted with.

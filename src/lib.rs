@@ -1,4 +1,5 @@
 #![feature(generic_associated_types)]
+// #![cfg_attr(not(feature = "std"), no_std)]
 
 //!
 //! A trait formulation of the Entry API, to make working with collections more flexible.
