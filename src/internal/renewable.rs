@@ -16,15 +16,11 @@ where
     /// if you need to store an entry for some reason, it can be really frustrating
     /// if you determine you need to look for a new key. This allows you to get that entry
     /// easily.
-    fn get_new_entry<Q>(self, k: Q) -> Entry<'a, K, V, I>
-    where
-        Q: ToOwned<Owned = K>;
+    fn get_new_entry(self, k: K) -> Entry<'a, K, V, I>;
 
     /// Move an existing value in the collection to a new key, returning the old key,
     /// and possibly the value displaced from the new location.
-    fn move_entry<Q>(&mut self, key: Q) -> (K, Option<V>)
-    where
-        Q: ToOwned<Owned = K>;
+    fn move_entry(&mut self, key: K) -> (K, Option<V>);
 }
 
 /// A trait to represent a vacant entry of a collection.
@@ -46,7 +42,5 @@ where
     /// if you need to store an entry for some reason, it can be really frustrating
     /// if you determine you need to look for a new key. This allows you to get that entry
     /// easily.
-    fn get_new_entry_old_key<Q>(self, k: Q) -> (Entry<'a, K, V, I>, K)
-    where
-        Q: ToOwned<Owned = K>;
+    fn get_new_entry_old_key(self, k: K) -> (Entry<'a, K, V, I>, K);
 }

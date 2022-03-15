@@ -68,16 +68,12 @@ impl<'a, T> OccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry<'a, T> {
 }
 
 impl<'a, T> RenewableOccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry<'a, T> {
-    fn get_new_entry<Q>(self, _k: Q) -> Entry<'a, (), T, Option<T>>
-    where
-        Q: ToOwned<Owned = ()>,
+    fn get_new_entry(self, _k: ()) -> Entry<'a, (), T, Option<T>>
     {
         Entry::Occupied(self)
     }
 
-    fn move_entry<Q>(&mut self, _key: Q) -> ((), Option<T>)
-    where
-        Q: ToOwned<Owned = ()>,
+    fn move_entry(&mut self, _key: ()) -> ((), Option<T>)
     {
         ((), None)
     }
@@ -105,9 +101,8 @@ impl<'a, T> VacantEntry<'a, (), T, Option<T>> for OptionVacantEntry<'a, T> {
 }
 
 impl<'a, T> RenewableVacantEntry<'a, (), T, Option<T>> for OptionVacantEntry<'a, T> {
-    fn get_new_entry_old_key<Q>(self, _k: Q) -> (Entry<'a, (), T, Option<T>>, ())
-    where
-        Q: ToOwned<Owned = ()>,
+    fn get_new_entry_old_key(self, _k: ()) -> (Entry<'a, (), T, Option<T>>, ())
+   
     {
         (Entry::Vacant(self), ())
     }

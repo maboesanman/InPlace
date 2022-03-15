@@ -74,9 +74,7 @@ where
     K: Eq,
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
 {
-    fn get_new_entry<Q>(self, k: Q) -> Entry<'a, K, V, I>
-    where
-        Q: ToOwned<Owned = K>;
+    fn get_new_entry(self, k: K) -> Entry<'a, K, V, I>;
 }
 
 impl<'a, K, V, I, T> RenewableVacantEntryExt<'a, K, V, I> for T
@@ -85,9 +83,7 @@ where
     I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
     T: RenewableVacantEntry<'a, K, V, I>,
 {
-    fn get_new_entry<Q>(self, k: Q) -> Entry<'a, K, V, I>
-    where
-        Q: ToOwned<Owned = K>,
+    fn get_new_entry(self, k: K) -> Entry<'a, K, V, I>
     {
         self.get_new_entry_old_key(k).0
     }

@@ -99,10 +99,7 @@ where
     I::Occupied<'a>: RenewableOccupiedEntry<'a, K, V, I>,
     I::Vacant<'a>: RenewableVacantEntry<'a, K, V, I>,
 {
-    pub fn get_new_entry<Q>(self, k: Q) -> Entry<'a, K, V, I>
-    where
-        Q: ToOwned<Owned = K>,
-    {
+    pub fn get_new_entry(self, k: K) -> Entry<'a, K, V, I> {
         match self {
             Entry::Occupied(e) => e.get_new_entry(k),
             Entry::Vacant(e) => e.get_new_entry(k),
