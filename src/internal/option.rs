@@ -72,7 +72,7 @@ impl<'a, T> RenewableOccupiedEntry<'a, (), T, Option<T>> for OptionOccupiedEntry
         Entry::Occupied(self)
     }
 
-    fn move_entry(&mut self, _key: ()) -> ((), Option<T>) {
+    fn move_entry(&mut self, _key: ()) -> ((), Option<((), T)>) {
         ((), None)
     }
 }

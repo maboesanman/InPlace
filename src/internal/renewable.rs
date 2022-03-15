@@ -20,7 +20,7 @@ where
 
     /// Move an existing value in the collection to a new key, returning the old key,
     /// and possibly the value displaced from the new location.
-    fn move_entry(&mut self, key: K) -> (K, Option<V>);
+    fn move_entry(&mut self, key: K) -> (K, Option<(K, V)>);
 }
 
 /// A trait to represent a vacant entry of a collection.
