@@ -26,11 +26,7 @@ impl<T> InPlace<(), T> for Option<T> {
         }
     }
 
-    fn get_entry_clone_key<'a, Q>(&'a mut self, k: &Q) -> Entry<'a, (), T, Self>
-    where
-        (): std::borrow::Borrow<Q>,
-        Q: Clone + Eq + ?Sized,
-    {
+    fn get_entry_clone_key<'a>(&'a mut self, _k: &()) -> Entry<'a, (), T, Self> {
         self.get_entry(())
     }
 }

@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use super::{entry::Entry, occupied_entry::OccupiedEntry, vacant_entry::VacantEntry};
 
 /// A trait for in-place modification of collections.
@@ -46,8 +44,7 @@ pub trait InPlace<K: Eq, V> {
     /// the entry can be thought of as "preserving the work you did to search",
     /// so you can insert and remove to your heart's content without re-traversing the
     /// internal data structure, or unwrapping values you know you inserted.
-    fn get_entry_clone_key<'a, Q>(&'a mut self, k: &Q) -> Entry<'a, K, V, Self>
+    fn get_entry_clone_key<'a>(&'a mut self, k: &K) -> Entry<'a, K, V, Self>
     where
-        K: Borrow<Q>,
-        Q: Clone + Eq + ?Sized;
+        K: Clone;
 }

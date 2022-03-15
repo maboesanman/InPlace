@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use super::{
     entry::Entry, in_place::InPlace, lazy_entry::LazyEntry, occupied_entry::OccupiedEntry,
     renewable::RenewableVacantEntry, vacant_entry::VacantEntry,
@@ -10,10 +8,9 @@ pub trait InPlaceExt<K: Eq, V>: InPlace<K, V> {
 
     fn insert_entry<'a>(&'a mut self, k: K, v: V) -> (Self::Occupied<'a>, Option<V>);
 
-    fn remove_entry<'a, Q>(&'a mut self, k: &Q) -> (Self::Vacant<'a>, Option<V>)
+    fn remove_entry<'a, Q>(&'a mut self, k: &K) -> (Self::Vacant<'a>, Option<V>)
     where
-        K: Borrow<Q>,
-        Q: Clone + Eq + ?Sized;
+        K: Clone;
 }
 
 impl<K: Eq, V, T: InPlace<K, V>> InPlaceExt<K, V> for T {
@@ -25,10 +22,9 @@ impl<K: Eq, V, T: InPlace<K, V>> InPlaceExt<K, V> for T {
         self.get_entry(k).insert_entry(v)
     }
 
-    fn remove_entry<'a, Q>(&'a mut self, k: &Q) -> (Self::Vacant<'a>, Option<V>)
+    fn remove_entry<'a, Q>(&'a mut self, k: &K) -> (Self::Vacant<'a>, Option<V>)
     where
-        K: Borrow<Q>,
-        Q: Clone + Eq + ?Sized,
+        K: Clone,
     {
         self.get_entry_clone_key(k).remove_entry()
     }
