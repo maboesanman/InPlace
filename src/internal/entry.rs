@@ -1,25 +1,42 @@
 use super::{
-    ext::{OccupiedEntryExt, RenewableVacantEntryExt},
-    in_place::InPlace,
-    occupied_entry::OccupiedEntry,
-    ord::InPlaceOrdEntry,
-    renewable::{RenewableOccupiedEntry, RenewableVacantEntry},
+    occupied_entry::{
+        EntryRemovableOccupiedEntry, InsertableOccupiedEntry,
+        KeyedOccupiedEntry, OccupiedEntry, RemovableOccupiedEntry,
+    },
     vacant_entry::VacantEntry,
 };
 
-pub enum Entry<'a, K, V, I>
+/// An entry which is either Occupied or Vacant.
+///
+/// This is for manipulating key-value map collections,
+/// for example HashMap, BTreeMap (also the Set variants, but those
+/// just have `V` set to `()`).
+pub enum Entry<'a, V, Vac>
 where
-    K: Eq,
-    I: InPlace<K, V> + ?Sized + 'a,
+    Vac: VacantEntry<'a, V>,
 {
-    Occupied(I::Occupied<'a>),
-    Vacant(I::Vacant<'a>),
+    Occupied(Vac::Occupied),
+    Vacant(Vac),
 }
 
-impl<'a, K, V, I> Entry<'a, K, V, I>
+impl<'a, V, Vac> Entry<'a, V, Vac>
+where
+    Vac: VacantEntry<'a, V>,
+{
+    pub fn from_occupied(entry: Vac::Occupied) -> Self {
+        Entry::Occupied(entry)
+    }
+
+    pub fn from_vacant(entry: Vac) -> Self {
+        Entry::Vacant(entry)
+    }
+}
+
+impl<'a, K, V, Vac> Entry<'a, V, Vac>
 where
     K: Eq,
-    I: InPlace<K, V> + ?Sized + 'a,
+    Vac: VacantEntry<'a, V>,
+    Vac::Occupied: KeyedOccupiedEntry<'a, K, V>,
 {
     pub fn get_key(&self) -> &K {
         match self {
@@ -42,89 +59,109 @@ where
         }
     }
 
-    pub fn into_pair_mut(self) -> Result<(&'a K, &'a mut V), I::Vacant<'a>> {
+    pub fn into_pair(self) -> Result<(&'a K, &'a mut V), Vac> {
         match self {
-            Entry::Occupied(e) => Ok(e.into_pair_mut()),
+            Entry::Occupied(e) => Ok(e.into_pair()),
             Entry::Vacant(e) => Err(e),
         }
     }
 
-    pub fn into_key(self) -> Result<K, I::Occupied<'a>> {
-        match self {
-            Entry::Occupied(e) => Err(e),
-            Entry::Vacant(e) => Ok(e.into_key()),
-        }
+    pub fn insert_into_entry(self, value: V) -> (Self, Option<V>) {
+        let (occupied, old_value) = self.occupy(value);
+        (Self::from_occupied(occupied), old_value)
     }
 
-    pub fn insert(self, val: V) -> Option<V> {
-        self.insert_entry(val).1
-    }
-
-    pub fn insert_entry(self, val: V) -> (I::Occupied<'a>, Option<V>) {
+    /// set the value, returning the OccupiedEntry,
+    /// and the displaced value if there was one.
+    pub fn occupy(self, value: V) -> (Vac::Occupied, Option<V>) {
         match self {
             Entry::Occupied(mut e) => {
-                let val = e.replace_value(val);
-                (e, Some(val))
+                let value = e.replace_value(value);
+                (e, Some(value))
             }
-            Entry::Vacant(e) => (e.insert_entry(val), None),
+            Entry::Vacant(e) => (e.occupy(value), None),
         }
     }
+}
 
-    pub fn remove(self) -> Option<V> {
-        self.remove_entry().1
-    }
-
-    pub fn remove_entry(self) -> (I::Vacant<'a>, Option<V>) {
+// when we remove an item, we either get a Occupied::Removed, or a Vacant.
+// we can convert this back into Entry if we can convert Removed into Entry.
+impl<'a, V, Vac> Entry<'a, V, Vac>
+where
+    Vac: VacantEntry<'a, V>,
+    Vac::Occupied: EntryRemovableOccupiedEntry<'a, V, Vacant = Vac>,
+{
+    pub fn remove_entry(self) -> (Self, Option<V>) {
         match self {
             Entry::Occupied(occupied) => {
-                let (vacant, val) = occupied.remove_entry();
-                (vacant, Some(val))
+                let (value, removed) = occupied.remove();
+                let entry = Vac::Occupied::recover_removed_entry(removed);
+                (entry, Some(value))
+            }
+            Entry::Vacant(vacant) => (Entry::Vacant(vacant), None),
+        }
+    }
+}
+
+// when we remove an item, we either get a Occupied::Removed, or a Vacant.
+// we can convert this back into Entry if we can convert Removed into Entry.
+impl<'a, V, Vac> Entry<'a, V, Vac>
+where
+    Vac: VacantEntry<'a, V>,
+    Vac::Occupied: RemovableOccupiedEntry<'a, V, Removed = Vac>,
+{
+    // pub fn remove_with_key(self) -> (K, Option<V>) {
+    //     let (vacant, value) = self.vacate();
+    //     (vacant.into_key(), value)
+    // }
+
+    pub fn vacate(self) -> (Vac, Option<V>) {
+        match self {
+            Entry::Occupied(occupied) => {
+                let (value, vacant) = occupied.remove();
+                (vacant, Some(value))
             }
             Entry::Vacant(vacant) => (vacant, None),
         }
     }
+}
 
-    pub fn is_occupied(&self) -> bool {
-        matches!(self, Entry::Occupied(_))
+impl<'a, V, Vac> Entry<'a, V, Vac>
+where
+    V: 'a,
+    Vac: VacantEntry<'a, V>,
+    Vac::Occupied: InsertableOccupiedEntry<'a, V>,
+{
+    pub fn insert_new(self, value: V) {
+        self.insert_new_entry(value);
     }
 
-    pub fn is_vacant(&self) -> bool {
-        matches!(self, Entry::Vacant(_))
+    pub fn insert_new_entry(self, value: V) -> Vac::Occupied {
+        match self {
+            Entry::Occupied(e) => e.insert_new(value),
+            Entry::Vacant(e) => e.occupy(value),
+        }
     }
 }
 
-impl<'a, K, V, I: InPlace<K, V> + ?Sized + 'a> Entry<'a, K, V, I>
+pub enum EntryWithSearchKey<'a, K, V, Vac>
 where
     K: Eq,
-    I::Occupied<'a>: RenewableOccupiedEntry<'a, K, V, I>,
-    I::Vacant<'a>: RenewableVacantEntry<'a, K, V, I>,
+    Vac: VacantEntry<'a, V>,
 {
-    pub fn get_new_entry(self, k: K) -> Entry<'a, K, V, I> {
-        match self {
-            Entry::Occupied(e) => e.get_new_entry(k),
-            Entry::Vacant(e) => e.get_new_entry(k),
-        }
-    }
+    Occupied(Vac::Occupied, K),
+    Vacant(Vac),
 }
 
-impl<'a, K, V, I> InPlaceOrdEntry<'a, K, V, I> for Entry<'a, K, V, I>
+impl<'a, K, V, Vac> From<EntryWithSearchKey<'a, K, V, Vac>> for Entry<'a, V, Vac>
 where
-    K: Ord,
-    I: InPlace<K, V> + ?Sized + 'a,
-    I::Occupied<'a>: InPlaceOrdEntry<'a, K, V, I>,
-    I::Vacant<'a>: InPlaceOrdEntry<'a, K, V, I>,
+    K: Eq,
+    Vac: VacantEntry<'a, V>,
 {
-    fn get_next_entry(self) -> Option<I::Occupied<'a>> {
-        match self {
-            Entry::Occupied(e) => e.get_next_entry(),
-            Entry::Vacant(e) => e.get_next_entry(),
-        }
-    }
-
-    fn get_prev_entry(self) -> Option<I::Occupied<'a>> {
-        match self {
-            Entry::Occupied(e) => e.get_prev_entry(),
-            Entry::Vacant(e) => e.get_prev_entry(),
+    fn from(entry: EntryWithSearchKey<'a, K, V, Vac>) -> Self {
+        match entry {
+            EntryWithSearchKey::Occupied(e, _) => Entry::Occupied(e),
+            EntryWithSearchKey::Vacant(e) => Entry::Vacant(e),
         }
     }
 }

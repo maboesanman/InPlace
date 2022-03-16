@@ -12,51 +12,51 @@
 //! used to create other useful operations on data structures.
 //!
 
-mod internal;
+pub mod internal;
 
-pub use internal::ext::InPlaceExt;
-pub use internal::in_place::InPlace;
+// pub use internal::ext::InPlaceExt;
+// pub use internal::in_place::InPlace;
 
-pub mod lazy {
-    use super::internal;
+// pub mod lazy {
+//     use super::internal;
 
-    pub use internal::lazy_entry;
-}
+//     pub use internal::lazy_entry;
+// }
 
-pub mod key_mut {
-    use super::internal;
+// pub mod key_mut {
+//     use super::internal;
 
-    pub use internal::occupied_entry::OccupiedEntryKeyMut;
-}
+//     pub use internal::occupied_entry::OccupiedEntryKeyMut;
+// }
 
-pub mod ord {
-    use super::internal;
+// pub mod ord {
+//     use super::internal;
 
-    pub use internal::ord::InPlaceOrd;
-    pub use internal::ord::InPlaceOrdEntry;
-}
+//     pub use internal::ord::InPlaceOrd;
+//     pub use internal::ord::InPlaceOrdEntry;
+// }
 
-/// most basic functionality, and extensions available on it.
-pub mod entry {
-    use super::internal;
+// /// most basic functionality, and extensions available on it.
+// pub mod entry {
+//     use super::internal;
 
-    pub use internal::entry::*;
-    pub use internal::occupied_entry::OccupiedEntry;
-    pub use internal::vacant_entry::VacantEntry;
+//     pub use internal::entry::*;
+//     pub use internal::occupied_entry::OccupiedEntry;
+//     pub use internal::vacant_entry::VacantEntry;
 
-    pub use internal::ext::OccupiedEntryExt;
-}
+//     pub use internal::ext::OccupiedEntryExt;
+// }
 
-pub mod renewable {
-    use super::internal;
+// pub mod renewable {
+//     use super::internal;
 
-    pub use internal::renewable::*;
+//     pub use internal::renewable::*;
 
-    pub use internal::ext::RenewableVacantEntryExt;
-}
+//     pub use internal::ext::RenewableVacantEntryExt;
+// }
 
-pub mod option {
-    use super::internal;
+// pub mod option {
+//     use super::internal;
 
-    pub use internal::option::*;
-}
+//     pub use internal::option::*;
+// }

@@ -5,10 +5,10 @@ use super::{entry::Entry, in_place::InPlace};
 /// A trait to represent an occupied entry of a collection.
 ///
 /// this can be thought of as holding a `&K`, and a `&mut V` into the collection.
-pub trait RenewableOccupiedEntry<'a, K, V, I>: OccupiedEntry<'a, K, V, I>
+pub trait RenewableOccupiedEntry<'a, K, V, Q>: OccupiedEntry<'a, K, V>
 where
-    K: Eq,
-    I: InPlace<K, V, Occupied<'a> = Self> + ?Sized + 'a,
+    K: Borrow<Q> + Eq,
+    Q: Eq,
 {
     /// get a completely new entry, as if from calling get_entry on the
     /// collection again.
@@ -16,7 +16,11 @@ where
     /// if you need to store an entry for some reason, it can be really frustrating
     /// if you determine you need to look for a new key. This allows you to get that entry
     /// easily.
-    fn get_new_entry(self, k: K) -> Entry<'a, K, V, I>;
+    fn get_new_entry(self, k: &Q) -> Entry<'a, K, V, Self::Occupied<'a>, Self::Vacant<'a>>
+    where
+        K: Clone;
+
+    fn try_insert_entry(self, k: K) -> Entry<'a, K, V, Self::Occupied<'a>, Self::Vacant<'a>>;
 
     /// Move an existing value in the collection to a new key, returning the old key,
     /// and possibly the value displaced from the new location.
@@ -29,10 +33,10 @@ where
 ///
 /// The idea is that you've done hard work of finding your place in the collection,
 /// so inserting shouldn't be a huge penalty at this point.
-pub trait RenewableVacantEntry<'a, K, V, I>: VacantEntry<'a, K, V, I>
+pub trait RenewableVacantEntry<'a, K, V, Q>: VacantEntry<'a, K, V>
 where
-    K: Eq,
-    I: InPlace<K, V, Vacant<'a> = Self> + ?Sized + 'a,
+    K: Borrow<Q> + Eq,
+    Q: Eq,
 {
     /// get a completely new entry, as if from calling get_entry on the
     /// collection again.
@@ -42,5 +46,9 @@ where
     /// if you need to store an entry for some reason, it can be really frustrating
     /// if you determine you need to look for a new key. This allows you to get that entry
     /// easily.
-    fn get_new_entry_old_key(self, k: K) -> (Entry<'a, K, V, I>, K);
+    fn get_new_entry_old_key(self, k: &Q) -> (Entry<'a, K, V, Self::Occupied, Self>, K)
+    where
+    K: Clone;
+
+    fn try_insert_entry_old_key(self, k: K) -> Entry<'a, K, V, Self::Occupied<'a>, Self::Vacant<'a>>;
 }
