@@ -8,4 +8,5 @@ pub mod occupied_entry;
 // pub mod renewable;
 pub mod dummy_collections;
 pub mod vacant_entry;
-pub mod slice;
+// pub mod slice;
+pub mod collection;
