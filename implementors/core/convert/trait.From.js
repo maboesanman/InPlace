@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["in_place"] = [{"text":"impl&lt;'c, Occ, Vac, K&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/convert/trait.From.html\" title=\"trait core::convert::From\">From</a>&lt;<a class=\"enum\" href=\"in_place/entry/enum.EntryWithSearchKey.html\" title=\"enum in_place::entry::EntryWithSearchKey\">EntryWithSearchKey</a>&lt;Occ, Vac, K&gt;&gt; for <a class=\"enum\" href=\"in_place/entry/enum.Entry.html\" title=\"enum in_place::entry::Entry\">Entry</a>&lt;Occ, Vac&gt;","synthetic":false,"types":["in_place::internal::entry::Entry"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
