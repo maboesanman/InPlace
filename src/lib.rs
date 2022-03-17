@@ -14,6 +14,7 @@
 
 mod internal;
 
+/// This module allows you to manipulate entries you have acquired
 pub mod entry {
     use super::internal;
 
@@ -22,58 +23,23 @@ pub mod entry {
     pub use internal::vacant_entry::*;
 }
 
+/// This module allows you to aquire entries from collections.
+/// 
+/// This requires generic associated types.
 pub mod get_entry {
     use super::internal;
 
     pub use internal::get_entry::*;
 }
 
+/// This module contains stubbed out examples of what this API looks like for standard collections.
 pub mod dummy_collections {
     use super::internal;
 
     pub use internal::dummy_collections::*;
 }
 
-// pub mod lazy {
-//     use super::internal;
+/// This module contains implementations of traits on collections, and struct definitions for the entries pertaining to those collections.
+pub mod implementations {
 
-//     pub use internal::lazy_entry;
-// }
-
-// pub mod key_mut {
-//     use super::internal;
-
-//     pub use internal::occupied_entry::OccupiedEntryKeyMut;
-// }
-
-// pub mod ord {
-//     use super::internal;
-
-//     pub use internal::ord::InPlaceOrd;
-//     pub use internal::ord::InPlaceOrdEntry;
-// }
-
-// /// most basic functionality, and extensions available on it.
-// pub mod entry {
-//     use super::internal;
-
-//     pub use internal::entry::*;
-//     pub use internal::occupied_entry::OccupiedEntry;
-//     pub use internal::vacant_entry::VacantEntry;
-
-//     pub use internal::ext::OccupiedEntryExt;
-// }
-
-// pub mod renewable {
-//     use super::internal;
-
-//     pub use internal::renewable::*;
-
-//     pub use internal::ext::RenewableVacantEntryExt;
-// }
-
-// pub mod option {
-//     use super::internal;
-
-//     pub use internal::option::*;
-// }
+}
