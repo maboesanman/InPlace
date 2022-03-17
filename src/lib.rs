@@ -12,10 +12,27 @@
 //! used to create other useful operations on data structures.
 //!
 
-pub mod internal;
+mod internal;
 
-// pub use internal::ext::InPlaceExt;
-// pub use internal::in_place::InPlace;
+pub mod entry {
+    use super::internal;
+
+    pub use internal::entry::*;
+    pub use internal::occupied_entry::*;
+    pub use internal::vacant_entry::*;
+}
+
+pub mod get_entry {
+    use super::internal;
+
+    pub use internal::get_entry::*;
+}
+
+pub mod dummy_collections {
+    use super::internal;
+
+    pub use internal::dummy_collections::*;
+}
 
 // pub mod lazy {
 //     use super::internal;

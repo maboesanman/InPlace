@@ -1,4 +1,4 @@
-use super::occupied_entry::{KeyedOccupiedEntry, OccupiedEntry, IndexedOccupiedEntry};
+use super::occupied_entry::{KeyedOccupiedEntry, OccupiedEntry};
 
 /// A trait to represent a vacant entry of a collection.
 ///
@@ -6,35 +6,35 @@ use super::occupied_entry::{KeyedOccupiedEntry, OccupiedEntry, IndexedOccupiedEn
 ///
 /// The idea is that you've done hard work of finding your place in the collection,
 /// so inserting shouldn't be a huge penalty at this point.
-pub trait VacantEntry<'a, V>: Sized {
+pub trait VacantEntry<'c>: Sized {
+    /// The type of values in the collection.
+    type Value: 'c;
+
     /// The type of OccupiedEntry we convert to when inserting.
-    type Occupied: OccupiedEntry<'a, V>;
+    type Occupied: OccupiedEntry<'c, Value = Self::Value>;
 
     /// insert the `val` using the owned key.
     ///
     /// if you need to chain a future deletion, use `insert_entry`
-    fn insert(self, val: V) {
+    fn insert(self, val: Self::Value) {
         self.occupy(val);
     }
 
     /// insert the `val` using the owned key, returning the occupied entry
-    fn occupy(self, val: V) -> Self::Occupied;
+    fn occupy(self, val: Self::Value) -> Self::Occupied;
 }
 
-pub trait KeyedVacantEntry<'a, K, V>: VacantEntry<'a, V>
-where Self::Occupied: KeyedOccupiedEntry<'a, K, V>
+pub trait KeyedVacantEntry<'c>: VacantEntry<'c>
+where
+    Self::Occupied: KeyedOccupiedEntry<'c, Key = Self::Key>,
 {
+    type Key: 'c;
 
     /// Get a reference to the key an item will be inserted with.
-    fn get_key(&self) -> &K;
+    fn get_key<'e>(&'e self) -> &'e Self::Key
+    where
+        'c: 'e;
 
     /// Consume self and return the contained key.
-    fn into_key(self) -> K;
-}
-
-pub trait IndexedVacantEntry<'a, V>: VacantEntry<'a, V>
-where Self::Occupied: IndexedOccupiedEntry<'a, V>
-{
-    /// Get the index the item will be inserted at.
-    fn get_key(&self) -> usize;
+    fn into_key(self) -> Self::Key;
 }
