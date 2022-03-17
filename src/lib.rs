@@ -41,5 +41,7 @@ pub mod dummy_collections {
 
 /// This module contains implementations of traits on collections, and struct definitions for the entries pertaining to those collections.
 pub mod implementations {
+    use super::internal;
 
+    pub use internal::implementations::*;
 }

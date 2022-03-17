@@ -18,6 +18,10 @@ pub struct DummyHashMapVacantEntry<'c, K, V> {
     _map: &'c mut DummyHashMap<K, V>,
 }
 
+pub struct DummyHashMapRawVacantEntry<'c, K, V> {
+    _map: &'c mut DummyHashMap<K, V>,
+}
+
 pub type DummyHashMapEntry<'c, K, V> =
     Entry<DummyHashMapOccupiedEntry<'c, K, V>, DummyHashMapVacantEntry<'c, K, V>>;
 
@@ -140,6 +144,22 @@ impl<'c, K, V> KeyedVacantEntry<'c> for DummyHashMapVacantEntry<'c, K, V> {
     }
 
     fn into_key(self) -> Self::Key {
+        todo!()
+    }
+}
+
+impl<'c, K, V> VacantEntry<'c> for DummyHashMapRawVacantEntry<'c, K, V> {
+    type Occupied = DummyHashMapOccupiedEntry<'c, K, V>;
+
+    type Value = (K, V);
+
+    fn occupy(self, val: Self::Value) -> Self::Occupied {
+        todo!()
+    }
+}
+
+impl<'c, K, V> DummyHashMapRawVacantEntry<'c, K, V> {
+    fn occupy_key(self, key: K) -> DummyHashMapVacantEntry<'c, K, V> {
         todo!()
     }
 }

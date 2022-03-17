@@ -11,7 +11,7 @@ pub trait VacantEntry<'c>: Sized {
     type Value: 'c;
 
     /// The type of OccupiedEntry we convert to when inserting.
-    type Occupied: OccupiedEntry<'c, Value = Self::Value>;
+    type Occupied: OccupiedEntry<'c>;
 
     /// insert the `val` using the owned key.
     ///
