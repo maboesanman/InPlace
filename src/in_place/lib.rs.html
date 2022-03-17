@@ -48,6 +48,8 @@
 <span id="43">43</span>
 <span id="44">44</span>
 <span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">feature</span>(<span class="ident">generic_associated_types</span>)]</span>
 <span class="comment">// #![cfg_attr(not(feature = &quot;std&quot;), no_std)]</span>
 
@@ -91,7 +93,9 @@
 
 <span class="doccomment">/// This module contains implementations of traits on collections, and struct definitions for the entries pertaining to those collections.</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">implementations</span> {
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::internal</span>;
 
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">internal::implementations</span>::<span class="kw-2">*</span>;
 }</code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (461e80780 2022-03-16)" ></div>
 </body></html>
