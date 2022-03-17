@@ -1,10 +1,9 @@
 use super::{
-    collection::{EntryCollection},
     occupied_entry::{
-        EntryRemovableOccupiedEntry, IndexedOccupiedEntry, InsertableOccupiedEntry,
-        KeyedOccupiedEntry, OccupiedEntry, RemovableOccupiedEntry,
+        EntryRemovableOccupiedEntry, InsertableOccupiedEntry, KeyedOccupiedEntry,
+        RemovableOccupiedEntry,
     },
-    vacant_entry::{IndexedVacantEntry, KeyedVacantEntry, VacantEntry},
+    vacant_entry::{KeyedVacantEntry, VacantEntry},
 };
 
 /// An entry which is either Occupied or Vacant.
@@ -12,89 +11,93 @@ use super::{
 /// This is for manipulating key-value map collections,
 /// for example HashMap, BTreeMap (also the Set variants, but those
 /// just have `V` set to `()`).
-pub enum Entry<'a, C: EntryCollection> {
-    Occupied(C::Occupied<'a>),
-    Vacant(C::Vacant<'a>),
+pub enum Entry<Occ, Vac> {
+    Occupied(Occ),
+    Vacant(Vac),
 }
 
-impl<'a, C> Entry<'a, C>
-where
-    C: EntryCollection,
-{
-    pub fn from_occupied(entry: C::Occupied<'a>) -> Self {
+impl<Occ, Vac> Entry<Occ, Vac> {
+    pub fn from_occupied(entry: Occ) -> Self {
         Entry::Occupied(entry)
     }
 
-    pub fn from_vacant(entry: C::Vacant<'a>) -> Self {
+    pub fn from_vacant(entry: Vac) -> Self {
         Entry::Vacant(entry)
     }
 }
 
-impl<'a, K, V, C> Entry<'a, C>
+impl<'c, 'e, Occ, Vac> Entry<Occ, Vac>
 where
-V: 'a,
-C: EntryCollection<Value = V>,
-for<'b> <C as EntryCollection>::Vacant<'b>: KeyedVacantEntry<'b, Key = K>,
-for<'b> <C as EntryCollection>::Occupied<'b>: KeyedOccupiedEntry<'b, Key = K>,
+    'c: 'e,
+    Occ: KeyedOccupiedEntry<'c>,
+    Vac: KeyedVacantEntry<'c, Key = Occ::Key, Value = Occ::Value, Occupied = Occ>,
 {
-    pub fn get_key(&self) -> &K {
+    pub fn get_key(&'e self) -> &'e Occ::Key {
         match self {
             Entry::Occupied(e) => e.get_pair().0,
             Entry::Vacant(e) => e.get_key(),
         }
     }
 
-    pub fn get_pair(&self) -> Result<(&K, &C::Value), &K> {
+    pub fn get_pair(&'e self) -> Result<(&'e Occ::Key, &'e Occ::Value), &'e Occ::Key> {
         match self {
             Entry::Occupied(e) => Ok(e.get_pair()),
             Entry::Vacant(e) => Err(e.get_key()),
         }
     }
 
-    pub fn get_pair_mut(&mut self) -> Result<(&K, &mut C::Value), &K> {
+    pub fn get_pair_mut(&'e mut self) -> Result<(&'e Occ::Key, &'e mut Occ::Value), &'e Occ::Key> {
         match self {
             Entry::Occupied(e) => Ok(e.get_pair_mut()),
             Entry::Vacant(e) => Err(e.get_key()),
         }
     }
 
-    pub fn into_pair(self) -> Result<(&'a K, &'a mut C::Value), C::Vacant<'a>> {
+    pub fn into_pair(self) -> Result<(Occ::BorrowedKey, &'c mut Occ::Value), Vac> {
         match self {
             Entry::Occupied(e) => Ok(e.into_pair()),
             Entry::Vacant(e) => Err(e),
         }
     }
 
-    pub fn insert_into_entry(self, value: C::Value) -> (Self, Option<C::Value>) {
+    pub fn insert_into_entry(self, value: Occ::Value) -> (Self, Option<Occ::Value>) {
         let (occupied, old_value) = self.occupy(value);
         (Self::from_occupied(occupied), old_value)
     }
 
     /// set the value, returning the OccupiedEntry,
     /// and the displaced value if there was one.
-    pub fn occupy(self, value: C::Value) -> (C::Occupied<'a>, Option<C::Value>) {
+    pub fn occupy(self, value: Occ::Value) -> (Occ, Option<Occ::Value>) {
         match self {
-            Entry::Occupied(mut e) => {
+            Entry::Occupied(e) => {
+                let mut e = e;
                 let value = e.replace_value(value);
                 (e, Some(value))
             }
             Entry::Vacant(e) => (e.occupy(value), None),
         }
     }
+
+    pub fn is_occupied(&'e self) -> bool {
+        matches!(self, Entry::Occupied(_))
+    }
+
+    pub fn is_vacant(&'e self) -> bool {
+        matches!(self, Entry::Vacant(_))
+    }
 }
 
 // when we remove an item, we either get a Occupied::Removed, or a Vacant.
 // we can convert this back into Entry if we can convert Removed into Entry.
-impl<'a, C> Entry<'a, C>
+impl<'c, Occ, Vac> Entry<Occ, Vac>
 where
-    C: EntryCollection,
-    C::Occupied<'a>: EntryRemovableOccupiedEntry<'a, C>,
+    Occ: EntryRemovableOccupiedEntry<'c, Vacant = Vac>,
 {
-    pub fn remove_entry(self) -> (Self, Option<C::Value>) {
+    pub fn remove_entry(self) -> (Self, Option<Occ::Value>) {
         match self {
             Entry::Occupied(occupied) => {
                 let (value, removed) = occupied.remove();
-                let entry = C::Occupied::recover_removed_entry(removed);
+                let entry = Occ::recover_removed_entry(removed);
                 (entry, Some(value))
             }
             Entry::Vacant(vacant) => (Entry::Vacant(vacant), None),
@@ -104,17 +107,11 @@ where
 
 // when we remove an item, we either get a Occupied::Removed, or a Vacant.
 // we can convert this back into Entry if we can convert Removed into Entry.
-impl<'a, C> Entry<'a, C>
+impl<'c, Occ, Vac> Entry<Occ, Vac>
 where
-    C: EntryCollection,
-    C::Occupied<'a>: RemovableOccupiedEntry<'a, Removed = C::Vacant<'a>>,
+    Occ: RemovableOccupiedEntry<'c, Removed = Vac>,
 {
-    // pub fn remove_with_key(self) -> (K, Option<V>) {
-    //     let (vacant, value) = self.vacate();
-    //     (vacant.into_key(), value)
-    // }
-
-    pub fn vacate(self) -> (C::Vacant<'a>, Option<C::Value>) {
+    pub fn vacate(self) -> (Vac, Option<Occ::Value>) {
         match self {
             Entry::Occupied(occupied) => {
                 let (value, vacant) = occupied.remove();
@@ -125,16 +122,30 @@ where
     }
 }
 
-impl<'a, C> Entry<'a, C>
+// when we remove an item, we either get a Occupied::Removed, or a Vacant.
+// we can convert this back into Entry if we can convert Removed into Entry.
+impl<'c, Occ, Vac> Entry<Occ, Vac>
 where
-    C: EntryCollection,
-    C::Occupied<'a>: InsertableOccupiedEntry<'a>,
+    Occ: RemovableOccupiedEntry<'c, Removed = Vac>,
+    Occ: KeyedOccupiedEntry<'c>,
+    Vac: KeyedVacantEntry<'c, Key = Occ::Key, Occupied = Occ>,
 {
-    pub fn insert_new(self, value: C::Value) {
-        self.insert_new_entry(value);
+    pub fn remove_with_key(self) -> (Occ::Key, Option<Occ::Value>) {
+        let (vacant, value) = self.vacate();
+        (vacant.into_key(), value)
+    }
+}
+
+impl<'c, Occ, Vac> Entry<Occ, Vac>
+where
+    Occ: InsertableOccupiedEntry<'c>,
+    Vac: VacantEntry<'c, Occupied = Occ, Value = Occ::Value>,
+{
+    pub fn insert_new(self, value: Occ::Value) {
+        self.occupy_new(value);
     }
 
-    pub fn insert_new_entry(self, value: C::Value) -> C::Occupied<'a> {
+    pub fn occupy_new(self, value: Occ::Value) -> Occ {
         match self {
             Entry::Occupied(e) => e.insert_new(value),
             Entry::Vacant(e) => e.occupy(value),
@@ -142,26 +153,37 @@ where
     }
 }
 
-pub enum EntryWithSearchKey<'a, C>
-where
-C: EntryCollection,
-for<'b> <C as EntryCollection>::Vacant<'b>: KeyedVacantEntry<'b>,
-for<'b> <C as EntryCollection>::Occupied<'b>: KeyedOccupiedEntry<'b>,
-{
-    Occupied(C::Occupied<'a>, <<C as EntryCollection>::Occupied<'a> as KeyedOccupiedEntry<'a>>::Key),
-    Vacant(C::Vacant<'a>),
+pub enum EntryWithSearchKey<Occ, Vac, K> {
+    Occupied(Occ, K),
+    Vacant(Vac),
 }
 
-impl<'a, K, C> From<EntryWithSearchKey<'a, C>> for Entry<'a, C>
-where
-C: EntryCollection,
-for<'b> <C as EntryCollection>::Vacant<'b>: KeyedVacantEntry<'b>,
-for<'b> <C as EntryCollection>::Occupied<'b>: KeyedOccupiedEntry<'b, Key = K>,
-{
-    fn from(entry: EntryWithSearchKey<'a, C>) -> Self {
+impl<'c, Occ, Vac, K> From<EntryWithSearchKey<Occ, Vac, K>> for Entry<Occ, Vac> {
+    fn from(entry: EntryWithSearchKey<Occ, Vac, K>) -> Self {
         match entry {
             EntryWithSearchKey::Occupied(e, _) => Entry::Occupied(e),
             EntryWithSearchKey::Vacant(e) => Entry::Vacant(e),
+        }
+    }
+}
+
+pub trait IntoCollectionMut<'c> {
+    type Collection: 'c + ?Sized;
+
+    fn into_collection_mut(self) -> &'c mut Self::Collection;
+}
+
+impl<'c, Occ, Vec> IntoCollectionMut<'c> for Entry<Occ, Vec>
+where
+    Occ: IntoCollectionMut<'c>,
+    Vec: IntoCollectionMut<'c, Collection = Occ::Collection>,
+{
+    type Collection = Occ::Collection;
+
+    fn into_collection_mut(self) -> &'c mut Self::Collection {
+        match self {
+            Entry::Occupied(e) => e.into_collection_mut(),
+            Entry::Vacant(e) => e.into_collection_mut(),
         }
     }
 }

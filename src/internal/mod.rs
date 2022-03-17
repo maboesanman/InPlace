@@ -1,12 +1,7 @@
-pub mod entry;
-// pub mod ext;
-pub mod get_entry;
-// pub mod lazy_entry;
-pub mod occupied_entry;
-// pub mod option;
-// pub mod ord;
-// pub mod renewable;
+#[allow(unused)]
 pub mod dummy_collections;
+pub mod entry;
+pub mod get_entry;
+pub mod implementations;
+pub mod occupied_entry;
 pub mod vacant_entry;
-// pub mod slice;
-pub mod collection;
