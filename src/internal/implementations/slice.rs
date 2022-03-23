@@ -1,4 +1,4 @@
-use crate::entry::IntoCollectionMut;
+use crate::entry::{IntoCollectionMut, NextOccupiedFromOccupied, PrevOccupiedFromOccupied};
 
 use super::super::{
     get_entry::{GetEntryByIndex, GetFirstEntry, GetLastEntry},
@@ -63,6 +63,28 @@ impl<'c, V> KeyedOccupiedEntry<'c> for OccupiedMutSliceEntry<'c, V> {
         (self.index, unsafe {
             self.slice.get_unchecked_mut(self.index)
         })
+    }
+}
+
+impl<'c, V> NextOccupiedFromOccupied<'c> for OccupiedMutSliceEntry<'c, V> {
+    fn get_next_occupied(mut self) -> Option<Self> {
+        self.index += 1;
+        if self.index < self.slice.len() {
+            Some(self)
+        } else {
+            None
+        }
+    }
+}
+
+impl<'c, V> PrevOccupiedFromOccupied<'c> for OccupiedMutSliceEntry<'c, V> {
+    fn get_prev_occupied(mut self) -> Option<Self> {
+        if self.index == 0 {
+            None
+        } else {
+            self.index -= 1;
+            Some(self)
+        }
     }
 }
 

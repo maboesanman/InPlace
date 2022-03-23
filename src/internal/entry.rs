@@ -1,3 +1,7 @@
+
+
+use crate::entry::{NextOccupiedFromOccupied, NextOccupiedFromVacant, PrevOccupiedFromOccupied, PrevOccupiedFromVacant};
+
 use super::{
     occupied_entry::{
         EntryRemovableOccupiedEntry, InsertableOccupiedEntry, KeyedOccupiedEntry,
@@ -149,6 +153,34 @@ where
         match self {
             Entry::Occupied(e) => e.insert_new(value),
             Entry::Vacant(e) => e.occupy(value),
+        }
+    }
+}
+
+impl<'c, Occ, Vac> Entry<Occ, Vac>
+where
+    Occ: NextOccupiedFromOccupied<'c>,
+    Occ::Key: Ord,
+    Vac: NextOccupiedFromVacant<'c, Occupied = Occ>,
+{
+    pub fn next_occupied(self) -> Option<Occ> {
+        match self {
+            Entry::Occupied(e) => e.get_next_occupied(),
+            Entry::Vacant(e) => e.get_next_occupied(),
+        }
+    }
+}
+
+impl<'c, Occ, Vac> Entry<Occ, Vac>
+where
+    Occ: PrevOccupiedFromOccupied<'c>,
+    Occ::Key: Ord,
+    Vac: PrevOccupiedFromVacant<'c, Occupied = Occ>,
+{
+    pub fn prev_occupied(self) -> Option<Occ> {
+        match self {
+            Entry::Occupied(e) => e.get_prev_occupied(),
+            Entry::Vacant(e) => e.get_prev_occupied(),
         }
     }
 }

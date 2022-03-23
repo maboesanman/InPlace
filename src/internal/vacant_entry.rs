@@ -45,3 +45,25 @@ where
     /// Consume self and return the contained key.
     fn into_key(self) -> Self::Key;
 }
+
+/// A trait to extend KeyedOccupiedEntry, allowing the user to get the next occupied entry,
+/// according to the ordering on the keys
+pub trait NextOccupiedFromVacant<'c>: VacantEntry<'c>
+where
+    Self::Occupied: KeyedOccupiedEntry<'c>,
+    <Self::Occupied as KeyedOccupiedEntry<'c>>::Key: Ord
+{
+    /// get the next occupied entry after this one.
+    fn get_next_occupied(self) -> Option<Self::Occupied>;
+}
+
+/// A trait to extend KeyedOccupiedEntry, allowing the user to get the previous occupied entry,
+/// according to the ordering on the keys
+pub trait PrevOccupiedFromVacant<'c>: VacantEntry<'c>
+where
+    Self::Occupied: KeyedOccupiedEntry<'c>,
+    <Self::Occupied as KeyedOccupiedEntry<'c>>::Key: Ord
+{
+    /// get the previous occupied entry after this one.
+    fn get_prev_occupied(self) -> Option<Self::Occupied>;
+}
