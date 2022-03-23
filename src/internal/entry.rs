@@ -34,23 +34,31 @@ impl<'c, 'e, Occ, Vac> Entry<Occ, Vac>
 where
     'c: 'e,
     Occ: KeyedOccupiedEntry<'c>,
-    Vac: KeyedVacantEntry<'c, Key = Occ::Key, Value = Occ::Value, Occupied = Occ>,
+    Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ>,
+    &'e Vac::Key: Into<&'e Occ::Key>,
 {
     pub fn get_key(&'e self) -> &'e Occ::Key {
         match self {
             Entry::Occupied(e) => e.get_pair().0,
-            Entry::Vacant(e) => e.get_key(),
+            Entry::Vacant(e) => e.get_key().into(),
         }
     }
+}
 
-    pub fn get_pair(&'e self) -> Result<(&'e Occ::Key, &'e Occ::Value), &'e Occ::Key> {
+impl<'c, 'e, Occ, Vac> Entry<Occ, Vac>
+where
+    'c: 'e,
+    Occ: KeyedOccupiedEntry<'c>,
+    Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ>,
+{
+    pub fn get_pair(&'e self) -> Result<(&'e Occ::Key, &'e Occ::Value), &'e Vac::Key> {
         match self {
             Entry::Occupied(e) => Ok(e.get_pair()),
             Entry::Vacant(e) => Err(e.get_key()),
         }
     }
 
-    pub fn get_pair_mut(&'e mut self) -> Result<(&'e Occ::Key, &'e mut Occ::Value), &'e Occ::Key> {
+    pub fn get_pair_mut(&'e mut self) -> Result<(&'e Occ::Key, &'e mut Occ::Value), &'e Vac::Key> {
         match self {
             Entry::Occupied(e) => Ok(e.get_pair_mut()),
             Entry::Vacant(e) => Err(e.get_key()),
@@ -163,7 +171,7 @@ where
     Occ::Key: Ord,
     Vac: NextOccupiedFromVacant<'c, Occupied = Occ>,
 {
-    pub fn next_occupied(self) -> Option<Occ> {
+    pub fn get_next_occupied(self) -> Option<Occ> {
         match self {
             Entry::Occupied(e) => e.get_next_occupied(),
             Entry::Vacant(e) => e.get_next_occupied(),
@@ -177,7 +185,7 @@ where
     Occ::Key: Ord,
     Vac: PrevOccupiedFromVacant<'c, Occupied = Occ>,
 {
-    pub fn prev_occupied(self) -> Option<Occ> {
+    pub fn get_prev_occupied(self) -> Option<Occ> {
         match self {
             Entry::Occupied(e) => e.get_prev_occupied(),
             Entry::Vacant(e) => e.get_prev_occupied(),

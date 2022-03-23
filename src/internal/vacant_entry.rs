@@ -31,10 +31,7 @@ pub trait VacantEntry<'c>: Sized {
 /// When this occurs, the get_entry method should move the owned key into a vacant entry, or clone it.
 ///
 /// this can be thought of as owning a `K`, ready to insert when given a corresponding value.
-pub trait KeyedVacantEntry<'c>: VacantEntry<'c>
-where
-    Self::Occupied: KeyedOccupiedEntry<'c, Key = Self::Key>,
-{
+pub trait KeyedVacantEntry<'c>: VacantEntry<'c> {
     type Key: 'c;
 
     /// Get a reference to the key an item will be inserted with.

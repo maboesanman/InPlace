@@ -1,11 +1,10 @@
-use crate::internal::{
+use crate::{internal::{
     entry::Entry,
     get_entry::{GetEntryByKey, GetEntryFromKey},
     occupied_entry::*,
     vacant_entry::*,
-};
+}, get_entry::{GetFirstEntry, GetLastEntry}};
 
-use core::hash::Hash;
 use core::{borrow::Borrow, marker::PhantomData};
 
 /// stand in for std::collections::BTreeMap
@@ -16,7 +15,7 @@ pub struct DummyBTreeMap<K, V> {
 /// Occupied entry of a BTreeMap.
 /// 
 /// This entry can be used to read the key, mutate the value,
-/// or remove the key/value pair from the BTreeMap, without re-hashing.
+/// or remove the key/value pair from the BTreeMap, without re-searching for the key.
 pub struct DummyBTreeMapOccupiedEntry<'c, K, V> {
     _map: &'c mut DummyBTreeMap<K, V>,
 }
@@ -33,7 +32,7 @@ pub struct DummyBTreeMapVacantEntry<'c, K, V> {
 /// Raw vacant entry of a BTreeMap.
 /// 
 /// This is acquired from the `get_raw_entry` method, and can insert into
-/// the BTreeMap when provided a `(K, V)` tuple where K hashes to the hash used
+/// the BTreeMap when provided a `(K, V)` tuple where K sorts the same as the query used
 /// to aquire this entry. Inserting with a (K, V) tuple gives a `DummyBTreeMapOccupiedEntry`
 pub struct DummyBTreeMapRawVacantEntry<'c, K, V> {
     _map: &'c mut DummyBTreeMap<K, V>,
@@ -49,7 +48,7 @@ pub type DummyBTreeMapRawEntry<'c, K, V> =
 
 impl<K, V> GetEntryFromKey<K, V> for DummyBTreeMap<K, V>
 where
-    K: Eq + Hash,
+    K: Ord,
 {
     type Occupied<'c> = DummyBTreeMapOccupiedEntry<'c, K, V>
     where
@@ -69,14 +68,40 @@ where
 
 impl<K, V, Q> GetEntryByKey<K, V, Q> for DummyBTreeMap<K, V>
 where
-    K: Borrow<Q> + Clone + Eq + Hash,
-    Q: Eq,
+    K: Borrow<Q> + Clone + Ord,
+    Q: Ord,
 {
     fn get_entry<'c>(&'c mut self, key: &Q) -> Entry<Self::Occupied<'c>, Self::Vacant<'c>> {
         todo!()
     }
 
     fn vacate<'c>(&'c mut self, key: &Q) -> (Self::Vacant<'c>, Option<V>) {
+        todo!()
+    }
+}
+
+impl<K, V> GetFirstEntry<V> for DummyBTreeMap<K, V>
+where
+    K: Ord,
+{
+    type Occupied<'c> = DummyBTreeMapOccupiedEntry<'c, K, V>
+    where
+        Self: 'c;
+
+    fn get_first_occupied<'c>(&'c mut self) -> Option<Self::Occupied<'c>> {
+        todo!()
+    }
+}
+
+impl<K, V> GetLastEntry<V> for DummyBTreeMap<K, V>
+where
+    K: Ord,
+{
+    type Occupied<'c> = DummyBTreeMapOccupiedEntry<'c, K, V>
+    where
+        Self: 'c;
+
+    fn get_last_occupied<'c>(&'c mut self) -> Option<Self::Occupied<'c>> {
         todo!()
     }
 }
