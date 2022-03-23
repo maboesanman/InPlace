@@ -43,11 +43,19 @@
 <span id="38">38</span>
 <span id="39">39</span>
 <span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::occupied_entry</span>::{<span class="ident">KeyedOccupiedEntry</span>, <span class="ident">OccupiedEntry</span>};
 
-<span class="doccomment">/// A trait to represent a vacant entry of a collection.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// this can be thought of as holding a `K`, ready to insert when given a value.</span>
+<span class="doccomment">/// A vacant entry of a collection.</span>
+<span class="doccomment">/// </span>
+<span class="doccomment">/// This is a slot into which you can insert a value with no concern for there already being a value there,</span>
+<span class="doccomment">/// because if you have a vacant entry, you have already done the work to confirm the slot is open and ready for a value.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The idea is that you&#39;ve done hard work of finding your place in the collection,</span>
 <span class="doccomment">/// so inserting shouldn&#39;t be a huge penalty at this point.</span>
@@ -69,6 +77,12 @@
     <span class="kw">fn</span> <span class="ident">occupy</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident"><span class="self">Self</span>::Value</span>) -&gt; <span class="ident"><span class="self">Self</span>::Occupied</span>;
 }
 
+<span class="doccomment">/// A vacant entry which has a key.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This is usually going to be created by some search by key, which was not present in the collection.</span>
+<span class="doccomment">/// When this occurs, the get_entry method should move the owned key into a vacant entry, or clone it.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// this can be thought of as owning a `K`, ready to insert when given a corresponding value.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident"><span class="self">Self</span>::Occupied</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Key</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::Key</span><span class="op">&gt;</span>,
@@ -84,5 +98,5 @@
     <span class="kw">fn</span> <span class="ident">into_key</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::Key</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (461e80780 2022-03-16)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (3c17c84a3 2022-03-21)" ></div>
 </body></html>

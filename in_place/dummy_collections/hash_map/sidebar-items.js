@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["DummyHashMap",""],["DummyHashMapOccupiedEntry",""],["DummyHashMapRawVacantEntry",""],["DummyHashMapVacantEntry",""]],"type":[["DummyHashMapEntry",""]]});
+initSidebarItems({"struct":[["DummyHashMap",""],["DummyHashMapOccupiedEntry",""],["DummyHashMapRawVacantEntry",""],["DummyHashMapVacantEntry",""]],"type":[["DummyHashMapEntry",""],["DummyHashMapRawEntry",""]]});
