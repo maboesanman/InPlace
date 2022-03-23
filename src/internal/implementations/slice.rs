@@ -67,10 +67,9 @@ impl<'c, V> KeyedOccupiedEntry<'c> for OccupiedMutSliceEntry<'c, V> {
 }
 
 impl<V> GetFirstEntry<V> for [V] {
-    type Occupied<'c>
+    type Occupied<'c> = OccupiedMutSliceEntry<'c, V>
     where
-        Self: 'c,
-    = OccupiedMutSliceEntry<'c, V>;
+        Self: 'c;
 
     fn get_first_occupied<'c>(&'c mut self) -> Option<Self::Occupied<'c>> {
         if self.is_empty() {
@@ -85,10 +84,9 @@ impl<V> GetFirstEntry<V> for [V] {
 }
 
 impl<V> GetLastEntry<V> for [V] {
-    type Occupied<'c>
+    type Occupied<'c> = OccupiedMutSliceEntry<'c, V>
     where
-        Self: 'c,
-    = OccupiedMutSliceEntry<'c, V>;
+        Self: 'c;
 
     fn get_last_occupied<'c>(&'c mut self) -> Option<Self::Occupied<'c>> {
         if self.is_empty() {
@@ -103,10 +101,9 @@ impl<V> GetLastEntry<V> for [V] {
 }
 
 impl<V> GetEntryByIndex<V> for [V] {
-    type Occupied<'c>
+    type Occupied<'c> = OccupiedMutSliceEntry<'c, V>
     where
-        Self: 'c,
-    = OccupiedMutSliceEntry<'c, V>;
+        Self: 'c;
 
     fn get_occupied<'c>(&'c mut self, index: usize) -> Option<Self::Occupied<'c>> {
         if index < self.len() {
