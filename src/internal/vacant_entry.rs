@@ -1,8 +1,9 @@
 use super::occupied_entry::{KeyedOccupiedEntry, OccupiedEntry};
 
-/// A trait to represent a vacant entry of a collection.
-///
-/// this can be thought of as holding a `K`, ready to insert when given a value.
+/// A vacant entry of a collection.
+/// 
+/// This is a slot into which you can insert a value with no concern for there already being a value there,
+/// because if you have a vacant entry, you have already done the work to confirm the slot is open and ready for a value.
 ///
 /// The idea is that you've done hard work of finding your place in the collection,
 /// so inserting shouldn't be a huge penalty at this point.
@@ -24,6 +25,12 @@ pub trait VacantEntry<'c>: Sized {
     fn occupy(self, val: Self::Value) -> Self::Occupied;
 }
 
+/// A vacant entry which has a key.
+///
+/// This is usually going to be created by some search by key, which was not present in the collection.
+/// When this occurs, the get_entry method should move the owned key into a vacant entry, or clone it.
+///
+/// this can be thought of as owning a `K`, ready to insert when given a corresponding value.
 pub trait KeyedVacantEntry<'c>: VacantEntry<'c>
 where
     Self::Occupied: KeyedOccupiedEntry<'c, Key = Self::Key>,
