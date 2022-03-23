@@ -224,6 +224,14 @@
 <span id="219">219</span>
 <span id="220">220</span>
 <span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
 </pre><pre class="rust"><code>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::entry</span>::{<span class="ident">NextOccupiedFromOccupied</span>, <span class="ident">NextOccupiedFromVacant</span>, <span class="ident">PrevOccupiedFromOccupied</span>, <span class="ident">PrevOccupiedFromVacant</span>};
@@ -260,23 +268,31 @@
 <span class="kw">where</span>
     <span class="lifetime">&#39;c</span>: <span class="lifetime">&#39;e</span>,
     <span class="ident">Occ</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
-    <span class="ident">Vac</span>: <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Key</span> <span class="op">=</span> <span class="ident">Occ::Key</span>, <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Occ::Value</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
+    <span class="ident">Vac</span>: <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Occ::Value</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
+    <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Vac::Key</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span><span class="op">&gt;</span>,
 {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_pair</span>().<span class="number">0</span>,
-            <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_key</span>(),
+            <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_key</span>().<span class="ident">into</span>(),
         }
     }
+}
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pair</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Value</span>), <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="lifetime">&#39;e</span>, <span class="ident">Occ</span>, <span class="ident">Vac</span><span class="op">&gt;</span> <span class="ident">Entry</span><span class="op">&lt;</span><span class="ident">Occ</span>, <span class="ident">Vac</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="lifetime">&#39;c</span>: <span class="lifetime">&#39;e</span>,
+    <span class="ident">Occ</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+    <span class="ident">Vac</span>: <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Occ::Value</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pair</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Value</span>), <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Vac::Key</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">get_pair</span>()),
             <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">get_key</span>()),
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pair_mut</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="kw-2">mut</span> <span class="ident">Occ::Value</span>), <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pair_mut</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="kw-2">mut</span> <span class="ident">Occ::Value</span>), <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Vac::Key</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">get_pair_mut</span>()),
             <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">get_key</span>()),
@@ -389,7 +405,7 @@
     <span class="ident">Occ::Key</span>: <span class="ident">Ord</span>,
     <span class="ident">Vac</span>: <span class="ident">NextOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
 {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_next_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_next_occupied</span>(),
             <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_next_occupied</span>(),
@@ -403,7 +419,7 @@
     <span class="ident">Occ::Key</span>: <span class="ident">Ord</span>,
     <span class="ident">Vac</span>: <span class="ident">PrevOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
 {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">prev_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_prev_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_prev_occupied</span>(),
             <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_prev_occupied</span>(),

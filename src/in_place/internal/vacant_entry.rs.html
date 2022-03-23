@@ -69,9 +69,6 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
-<span id="67">67</span>
-<span id="68">68</span>
-<span id="69">69</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::occupied_entry</span>::{<span class="ident">KeyedOccupiedEntry</span>, <span class="ident">OccupiedEntry</span>};
 
 <span class="doccomment">/// A vacant entry of a collection.</span>
@@ -105,10 +102,7 @@
 <span class="doccomment">/// When this occurs, the get_entry method should move the owned key into a vacant entry, or clone it.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// this can be thought of as owning a `K`, ready to insert when given a corresponding value.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident"><span class="self">Self</span>::Occupied</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Key</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::Key</span><span class="op">&gt;</span>,
-{
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Key</span>: <span class="lifetime">&#39;c</span>;
 
     <span class="doccomment">/// Get a reference to the key an item will be inserted with.</span>

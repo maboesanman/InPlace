@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["DummyLinkedList","stand in for std::collections::LinkedList"],["DummyLinkedListOccupiedEntry","Occupied entry of a LinkedList."],["DummyLinkedListVacantEntry","Vacant entry of a LinkedList."]],"type":[["DummyLinkedListEntry","An entry of a LinkedList. This is either `DummyLinkedListOccupiedEntry` or `DummyLinkedListVacantEntry`."]]});
