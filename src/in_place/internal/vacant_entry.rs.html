@@ -50,6 +50,28 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::occupied_entry</span>::{<span class="ident">KeyedOccupiedEntry</span>, <span class="ident">OccupiedEntry</span>};
 
 <span class="doccomment">/// A vacant entry of a collection.</span>
@@ -97,6 +119,28 @@
     <span class="doccomment">/// Consume self and return the contained key.</span>
     <span class="kw">fn</span> <span class="ident">into_key</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::Key</span>;
 }
+
+<span class="doccomment">/// A trait to extend KeyedOccupiedEntry, allowing the user to get the next occupied entry,</span>
+<span class="doccomment">/// according to the ordering on the keys</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">NextOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident"><span class="self">Self</span>::Occupied</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+    <span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span> <span class="kw">as</span> <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Key</span>: <span class="ident">Ord</span>
+{
+    <span class="doccomment">/// get the next occupied entry after this one.</span>
+    <span class="kw">fn</span> <span class="ident">get_next_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span><span class="op">&gt;</span>;
+}
+
+<span class="doccomment">/// A trait to extend KeyedOccupiedEntry, allowing the user to get the previous occupied entry,</span>
+<span class="doccomment">/// according to the ordering on the keys</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">PrevOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident"><span class="self">Self</span>::Occupied</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+    <span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span> <span class="kw">as</span> <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Key</span>: <span class="ident">Ord</span>
+{
+    <span class="doccomment">/// get the previous occupied entry after this one.</span>
+    <span class="kw">fn</span> <span class="ident">get_prev_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span><span class="op">&gt;</span>;
+}
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (3c17c84a3 2022-03-21)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (5f3700105 2022-03-22)" ></div>
 </body></html>

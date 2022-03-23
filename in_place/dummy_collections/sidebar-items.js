@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["hash_map",""]]});
+initSidebarItems({"mod":[["b_tree_map",""],["hash_map",""]]});

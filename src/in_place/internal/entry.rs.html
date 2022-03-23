@@ -192,7 +192,43 @@
 <span id="187">187</span>
 <span id="188">188</span>
 <span id="189">189</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">super</span>::{
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+</pre><pre class="rust"><code>
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::entry</span>::{<span class="ident">NextOccupiedFromOccupied</span>, <span class="ident">NextOccupiedFromVacant</span>, <span class="ident">PrevOccupiedFromOccupied</span>, <span class="ident">PrevOccupiedFromVacant</span>};
+
+<span class="kw">use</span> <span class="kw">super</span>::{
     <span class="ident">occupied_entry</span>::{
         <span class="ident">EntryRemovableOccupiedEntry</span>, <span class="ident">InsertableOccupiedEntry</span>, <span class="ident">KeyedOccupiedEntry</span>,
         <span class="ident">RemovableOccupiedEntry</span>,
@@ -347,6 +383,34 @@
     }
 }
 
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occ</span>, <span class="ident">Vac</span><span class="op">&gt;</span> <span class="ident">Entry</span><span class="op">&lt;</span><span class="ident">Occ</span>, <span class="ident">Vac</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">Occ</span>: <span class="ident">NextOccupiedFromOccupied</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+    <span class="ident">Occ::Key</span>: <span class="ident">Ord</span>,
+    <span class="ident">Vac</span>: <span class="ident">NextOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_next_occupied</span>(),
+            <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_next_occupied</span>(),
+        }
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occ</span>, <span class="ident">Vac</span><span class="op">&gt;</span> <span class="ident">Entry</span><span class="op">&lt;</span><span class="ident">Occ</span>, <span class="ident">Vac</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">Occ</span>: <span class="ident">PrevOccupiedFromOccupied</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+    <span class="ident">Occ::Key</span>: <span class="ident">Ord</span>,
+    <span class="ident">Vac</span>: <span class="ident">PrevOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">prev_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_prev_occupied</span>(),
+            <span class="ident">Entry::Vacant</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_prev_occupied</span>(),
+        }
+    }
+}
+
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">EntryWithSearchKey</span><span class="op">&lt;</span><span class="ident">Occ</span>, <span class="ident">Vac</span>, <span class="ident">K</span><span class="op">&gt;</span> {
     <span class="ident">Occupied</span>(<span class="ident">Occ</span>, <span class="ident">K</span>),
     <span class="ident">Vacant</span>(<span class="ident">Vac</span>),
@@ -382,5 +446,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (3c17c84a3 2022-03-21)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (5f3700105 2022-03-22)" ></div>
 </body></html>
