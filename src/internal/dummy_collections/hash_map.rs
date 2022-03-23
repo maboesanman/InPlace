@@ -25,19 +25,21 @@ pub struct DummyHashMapRawVacantEntry<'c, K, V> {
 pub type DummyHashMapEntry<'c, K, V> =
     Entry<DummyHashMapOccupiedEntry<'c, K, V>, DummyHashMapVacantEntry<'c, K, V>>;
 
+
+pub type DummyHashMapRawEntry<'c, K, V> =
+    Entry<DummyHashMapOccupiedEntry<'c, K, V>, DummyHashMapRawVacantEntry<'c, K, V>>;
+
 impl<K, V> GetEntryFromKey<K, V> for DummyHashMap<K, V>
 where
     K: Eq + Hash,
 {
-    type Occupied<'c>
+    type Occupied<'c> = DummyHashMapOccupiedEntry<'c, K, V>
     where
-        Self: 'c,
-    = DummyHashMapOccupiedEntry<'c, K, V>;
+        Self: 'c;
 
-    type Vacant<'c>
+    type Vacant<'c> = DummyHashMapVacantEntry<'c, K, V>
     where
-        Self: 'c,
-    = DummyHashMapVacantEntry<'c, K, V>;
+        Self: 'c;
 
     fn get_entry_with_key<'c>(
         &'c mut self,
@@ -160,6 +162,12 @@ impl<'c, K, V> VacantEntry<'c> for DummyHashMapRawVacantEntry<'c, K, V> {
 
 impl<'c, K, V> DummyHashMapRawVacantEntry<'c, K, V> {
     fn occupy_key(self, key: K) -> DummyHashMapVacantEntry<'c, K, V> {
+        todo!()
+    }
+}
+
+impl<K, V> DummyHashMap<K, V> {
+    fn get_raw_entry(&mut self, hash: u64) -> DummyHashMapRawEntry<'_, K, V> {
         todo!()
     }
 }
