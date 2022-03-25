@@ -232,6 +232,24 @@
 <span id="227">227</span>
 <span id="228">228</span>
 <span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
 </pre><pre class="rust"><code>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::entry</span>::{<span class="ident">NextOccupiedFromOccupied</span>, <span class="ident">NextOccupiedFromVacant</span>, <span class="ident">PrevOccupiedFromOccupied</span>, <span class="ident">PrevOccupiedFromVacant</span>};
@@ -271,6 +289,7 @@
     <span class="ident">Vac</span>: <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Occ::Value</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Vac::Key</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span><span class="op">&gt;</span>,
 {
+    <span class="doccomment">/// get a reference to the key this entry corresponds to.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>.<span class="ident">get_pair</span>().<span class="number">0</span>,
@@ -285,6 +304,9 @@
     <span class="ident">Occ</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
     <span class="ident">Vac</span>: <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Occ::Value</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
 {
+    <span class="doccomment">/// get a reference to the key and value of this entry, if it&#39;s occupied.</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// if it&#39;s not occupied, get a reference to the vacant key.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pair</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Value</span>), <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Vac::Key</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">get_pair</span>()),
@@ -292,6 +314,9 @@
         }
     }
 
+    <span class="doccomment">/// get an immutable reference to the key and a mutable reference to the value of this entry, if it&#39;s occupied.</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// if it&#39;s not occupied, get a reference to the vacant key.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_pair_mut</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Occ::Key</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="kw-2">mut</span> <span class="ident">Occ::Value</span>), <span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="ident">Vac::Key</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">get_pair_mut</span>()),
@@ -299,6 +324,9 @@
         }
     }
 
+    <span class="doccomment">/// consume this entry and return a mutable reference to the value in the collection, </span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// if it&#39;s not occupied, get a vacant entry.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_pair</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Occ::BorrowedKey</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="kw-2">mut</span> <span class="ident">Occ::Value</span>), <span class="ident">Vac</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">into_pair</span>()),
@@ -306,6 +334,7 @@
         }
     }
 
+    <span class="doccomment">/// try to insert into the entry, returning a new entry, and a value if it was occupied.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_into_entry</span>(<span class="self">self</span>, <span class="ident">value</span>: <span class="ident">Occ::Value</span>) -&gt; (<span class="self">Self</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ::Value</span><span class="op">&gt;</span>) {
         <span class="kw">let</span> (<span class="ident">occupied</span>, <span class="ident">old_value</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">occupy</span>(<span class="ident">value</span>);
         (<span class="ident"><span class="self">Self</span>::from_occupied</span>(<span class="ident">occupied</span>), <span class="ident">old_value</span>)
@@ -324,10 +353,12 @@
         }
     }
 
+    <span class="doccomment">/// returns true if the entry is occupied.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_occupied</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">Entry::Occupied</span>(<span class="kw">_</span>))
     }
 
+    <span class="doccomment">/// returns true if the entry is vacant.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_vacant</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;e</span> <span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">Entry::Vacant</span>(<span class="kw">_</span>))
     }
@@ -339,6 +370,7 @@
 <span class="kw">where</span>
     <span class="ident">Occ</span>: <span class="ident">EntryRemovableOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Vacant</span> <span class="op">=</span> <span class="ident">Vac</span><span class="op">&gt;</span>,
 {
+    <span class="doccomment">/// remove this entry, returning a new entry. for keyed collections this will be vacant.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove_entry</span>(<span class="self">self</span>) -&gt; (<span class="self">Self</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ::Value</span><span class="op">&gt;</span>) {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">occupied</span>) =&gt; {
@@ -357,6 +389,7 @@
 <span class="kw">where</span>
     <span class="ident">Occ</span>: <span class="ident">RemovableOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Removed</span> <span class="op">=</span> <span class="ident">Vac</span><span class="op">&gt;</span>,
 {
+    <span class="doccomment">/// remove this entry, returning the newly vacated entry, and the value if it was occupied.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vacate</span>(<span class="self">self</span>) -&gt; (<span class="ident">Vac</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ::Value</span><span class="op">&gt;</span>) {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Entry::Occupied</span>(<span class="ident">occupied</span>) =&gt; {
@@ -376,6 +409,7 @@
     <span class="ident">Occ</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
     <span class="ident">Vac</span>: <span class="ident">KeyedVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Key</span> <span class="op">=</span> <span class="ident">Occ::Key</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span><span class="op">&gt;</span>,
 {
+    <span class="doccomment">/// remove the entry, and return an owned key, and an optional value, if it was occupied.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove_with_key</span>(<span class="self">self</span>) -&gt; (<span class="ident">Occ::Key</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Occ::Value</span><span class="op">&gt;</span>) {
         <span class="kw">let</span> (<span class="ident">vacant</span>, <span class="ident">value</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">vacate</span>();
         (<span class="ident">vacant</span>.<span class="ident">into_key</span>(), <span class="ident">value</span>)
@@ -387,6 +421,8 @@
     <span class="ident">Occ</span>: <span class="ident">InsertableOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
     <span class="ident">Vac</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">Occupied</span> <span class="op">=</span> <span class="ident">Occ</span>, <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Occ::Value</span><span class="op">&gt;</span>,
 {
+    <span class="doccomment">/// insert a new entry in this place.</span>
+    <span class="doccomment">/// if the entry is vacant, it will be filled. if it is not vacant, it will be inserted here.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_new</span>(<span class="self">self</span>, <span class="ident">value</span>: <span class="ident">Occ::Value</span>) {
         <span class="self">self</span>.<span class="ident">occupy_new</span>(<span class="ident">value</span>);
     }
@@ -462,5 +498,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (5f3700105 2022-03-22)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9f4dc0b4d 2022-03-23)" ></div>
 </body></html>
