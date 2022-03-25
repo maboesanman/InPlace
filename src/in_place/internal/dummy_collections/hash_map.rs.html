@@ -196,8 +196,6 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal</span>::{
     <span class="ident">entry::Entry</span>,
     <span class="ident">get_entry</span>::{<span class="ident">GetEntryByKey</span>, <span class="ident">GetEntryFromKey</span>},
@@ -214,7 +212,7 @@
 }
 
 <span class="doccomment">/// Occupied entry of a HashMap.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// This entry can be used to read the key, mutate the value,</span>
 <span class="doccomment">/// or remove the key/value pair from the HashMap, without re-hashing.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DummyHashMapOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
@@ -222,7 +220,7 @@
 }
 
 <span class="doccomment">/// Vacant entry of a HashMap.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// This contains the key used to search for this entry,</span>
 <span class="doccomment">/// and can read that key, or insert into the HashMap at that key,</span>
 <span class="doccomment">/// when provided a value.</span>
@@ -231,7 +229,7 @@
 }
 
 <span class="doccomment">/// Raw vacant entry of a HashMap.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// This is acquired from the `get_raw_entry` method, and can insert into</span>
 <span class="doccomment">/// the HashMap when provided a `(K, V)` tuple where K hashes to the hash used</span>
 <span class="doccomment">/// to aquire this entry. Inserting with a (K, V) tuple gives a `DummyHashMapOccupiedEntry`</span>
@@ -379,7 +377,6 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="ident">DummyHashMapRawVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
-
     <span class="doccomment">/// elevate a raw vacant entry to a regular vacant entry by providing a key.</span>
     <span class="kw">fn</span> <span class="ident">occupy_key</span>(<span class="self">self</span>, <span class="ident">key</span>: <span class="ident">K</span>) -&gt; <span class="ident">DummyHashMapVacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
         <span class="macro">todo!</span>()
@@ -387,12 +384,11 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="ident">DummyHashMap</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
-
     <span class="doccomment">/// get a raw entry for a given hash.</span>
     <span class="kw">fn</span> <span class="ident">get_raw_entry</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>) -&gt; <span class="ident">DummyHashMapRawEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
         <span class="macro">todo!</span>()
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9f4dc0b4d 2022-03-23)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (63b8f01bb 2022-03-24)" ></div>
 </body></html>

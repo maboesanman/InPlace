@@ -72,7 +72,7 @@
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::occupied_entry</span>::{<span class="ident">KeyedOccupiedEntry</span>, <span class="ident">OccupiedEntry</span>};
 
 <span class="doccomment">/// A vacant entry of a collection.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// This is a slot into which you can insert a value with no concern for there already being a value there,</span>
 <span class="doccomment">/// because if you have a vacant entry, you have already done the work to confirm the slot is open and ready for a value.</span>
 <span class="doccomment">///</span>
@@ -119,7 +119,7 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">NextOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident"><span class="self">Self</span>::Occupied</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
-    <span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span> <span class="kw">as</span> <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Key</span>: <span class="ident">Ord</span>
+    <span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span> <span class="kw">as</span> <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Key</span>: <span class="ident">Ord</span>,
 {
     <span class="doccomment">/// get the next occupied entry after this one.</span>
     <span class="kw">fn</span> <span class="ident">get_next_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span><span class="op">&gt;</span>;
@@ -130,11 +130,11 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">PrevOccupiedFromVacant</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>: <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident"><span class="self">Self</span>::Occupied</span>: <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
-    <span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span> <span class="kw">as</span> <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Key</span>: <span class="ident">Ord</span>
+    <span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span> <span class="kw">as</span> <span class="ident">KeyedOccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Key</span>: <span class="ident">Ord</span>,
 {
     <span class="doccomment">/// get the previous occupied entry after this one.</span>
     <span class="kw">fn</span> <span class="ident">get_prev_occupied</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Occupied</span><span class="op">&gt;</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9f4dc0b4d 2022-03-23)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="in_place" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (63b8f01bb 2022-03-24)" ></div>
 </body></html>
