@@ -1,7 +1,7 @@
 use super::occupied_entry::{KeyedOccupiedEntry, OccupiedEntry};
 
 /// A vacant entry of a collection.
-/// 
+///
 /// This is a slot into which you can insert a value with no concern for there already being a value there,
 /// because if you have a vacant entry, you have already done the work to confirm the slot is open and ready for a value.
 ///
@@ -48,7 +48,7 @@ pub trait KeyedVacantEntry<'c>: VacantEntry<'c> {
 pub trait NextOccupiedFromVacant<'c>: VacantEntry<'c>
 where
     Self::Occupied: KeyedOccupiedEntry<'c>,
-    <Self::Occupied as KeyedOccupiedEntry<'c>>::Key: Ord
+    <Self::Occupied as KeyedOccupiedEntry<'c>>::Key: Ord,
 {
     /// get the next occupied entry after this one.
     fn get_next_occupied(self) -> Option<Self::Occupied>;
@@ -59,7 +59,7 @@ where
 pub trait PrevOccupiedFromVacant<'c>: VacantEntry<'c>
 where
     Self::Occupied: KeyedOccupiedEntry<'c>,
-    <Self::Occupied as KeyedOccupiedEntry<'c>>::Key: Ord
+    <Self::Occupied as KeyedOccupiedEntry<'c>>::Key: Ord,
 {
     /// get the previous occupied entry after this one.
     fn get_prev_occupied(self) -> Option<Self::Occupied>;

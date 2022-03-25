@@ -1,6 +1,8 @@
 use std::mem::MaybeUninit;
 
-use crate::entry::{OccupiedEntry, VacantEntry, RemovableOccupiedEntry, EntryRemovableOccupiedEntry, Entry};
+use crate::entry::{
+    Entry, EntryRemovableOccupiedEntry, OccupiedEntry, RemovableOccupiedEntry, VacantEntry,
+};
 
 pub struct MaybeUninitEntry<'c, T, const OCCUPIED: bool>(&'c mut MaybeUninit<T>);
 
@@ -9,13 +11,15 @@ impl<'c, T> OccupiedEntry<'c> for MaybeUninitEntry<'c, T, true> {
 
     fn get_value<'e>(&'e self) -> &'e Self::Value
     where
-        'c: 'e {
+        'c: 'e,
+    {
         unsafe { self.0.assume_init_ref() }
     }
 
     fn get_value_mut<'e>(&'e mut self) -> &mut Self::Value
     where
-        'c: 'e {
+        'c: 'e,
+    {
         unsafe { self.0.assume_init_mut() }
     }
 

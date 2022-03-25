@@ -1,9 +1,12 @@
-use crate::{internal::{
-    entry::Entry,
-    get_entry::{GetEntryByKey, GetEntryFromKey},
-    occupied_entry::*,
-    vacant_entry::*,
-}, get_entry::{GetFirstEntry, GetLastEntry}};
+use crate::{
+    get_entry::{GetFirstEntry, GetLastEntry},
+    internal::{
+        entry::Entry,
+        get_entry::{GetEntryByKey, GetEntryFromKey},
+        occupied_entry::*,
+        vacant_entry::*,
+    },
+};
 
 use core::{borrow::Borrow, marker::PhantomData};
 
@@ -13,7 +16,7 @@ pub struct DummyBTreeMap<K, V> {
 }
 
 /// Occupied entry of a BTreeMap.
-/// 
+///
 /// This entry can be used to read the key, mutate the value,
 /// or remove the key/value pair from the BTreeMap, without re-searching for the key.
 pub struct DummyBTreeMapOccupiedEntry<'c, K, V> {
@@ -21,7 +24,7 @@ pub struct DummyBTreeMapOccupiedEntry<'c, K, V> {
 }
 
 /// Vacant entry of a BTreeMap.
-/// 
+///
 /// This contains the key used to search for this entry,
 /// and can read that key, or insert into the BTreeMap at that key,
 /// when provided a value.
@@ -30,7 +33,7 @@ pub struct DummyBTreeMapVacantEntry<'c, K, V> {
 }
 
 /// Raw vacant entry of a BTreeMap.
-/// 
+///
 /// This is acquired from the `get_raw_entry` method, and can insert into
 /// the BTreeMap when provided a `(K, V)` tuple where K sorts the same as the query used
 /// to aquire this entry. Inserting with a (K, V) tuple gives a `DummyBTreeMapOccupiedEntry`
@@ -168,9 +171,9 @@ impl<'c, K, V> EntryRemovableOccupiedEntry<'c> for DummyBTreeMapOccupiedEntry<'c
     }
 }
 
-
 impl<'c, K, V> NextOccupiedFromOccupied<'c> for DummyBTreeMapOccupiedEntry<'c, K, V>
-where K: Ord
+where
+    K: Ord,
 {
     fn get_next_occupied(mut self) -> Option<Self> {
         todo!()
@@ -178,7 +181,8 @@ where K: Ord
 }
 
 impl<'c, K, V> PrevOccupiedFromOccupied<'c> for DummyBTreeMapOccupiedEntry<'c, K, V>
-where K: Ord
+where
+    K: Ord,
 {
     fn get_prev_occupied(mut self) -> Option<Self> {
         todo!()
@@ -211,7 +215,8 @@ impl<'c, K, V> KeyedVacantEntry<'c> for DummyBTreeMapVacantEntry<'c, K, V> {
 }
 
 impl<'c, K, V> NextOccupiedFromVacant<'c> for DummyBTreeMapVacantEntry<'c, K, V>
-where K: Ord
+where
+    K: Ord,
 {
     fn get_next_occupied(mut self) -> Option<Self::Occupied> {
         todo!()
@@ -219,7 +224,8 @@ where K: Ord
 }
 
 impl<'c, K, V> PrevOccupiedFromVacant<'c> for DummyBTreeMapVacantEntry<'c, K, V>
-where K: Ord
+where
+    K: Ord,
 {
     fn get_prev_occupied(mut self) -> Option<Self::Occupied> {
         todo!()
@@ -237,7 +243,8 @@ impl<'c, K, V> VacantEntry<'c> for DummyBTreeMapRawVacantEntry<'c, K, V> {
 }
 
 impl<'c, K, V> NextOccupiedFromVacant<'c> for DummyBTreeMapRawVacantEntry<'c, K, V>
-where K: Ord
+where
+    K: Ord,
 {
     fn get_next_occupied(mut self) -> Option<Self::Occupied> {
         todo!()
@@ -245,7 +252,8 @@ where K: Ord
 }
 
 impl<'c, K, V> PrevOccupiedFromVacant<'c> for DummyBTreeMapRawVacantEntry<'c, K, V>
-where K: Ord
+where
+    K: Ord,
 {
     fn get_prev_occupied(mut self) -> Option<Self::Occupied> {
         todo!()
@@ -253,9 +261,8 @@ where K: Ord
 }
 
 impl<'c, K, V> DummyBTreeMapRawVacantEntry<'c, K, V> {
-
     /// Elevate a raw vacant entry to a regular vacant entry by providing a key.
-    /// 
+    ///
     /// This key must evaluate to `Ordering::Equal` when passed to the comparator and query
     /// to maintain BTreeMap invariants.
     fn occupy_key(self, key: K) -> DummyBTreeMapVacantEntry<'c, K, V> {
@@ -264,15 +271,19 @@ impl<'c, K, V> DummyBTreeMapRawVacantEntry<'c, K, V> {
 }
 
 impl<K, V> DummyBTreeMap<K, V> {
-
     /// get a raw entry for a given query value and comparator.
-    /// 
+    ///
     /// comparator must observe the transitive property for K and Q.
     /// (k1 < q) && (q < k2) => (k1 < k2).
-    /// 
+    ///
     /// when inserting into this entry, `comparator(&inserted_key, &query)` must evaluate to `Ordering::Equal`.
-    fn get_raw_entry<Q, Cmp>(&mut self, query: Q, comparator: Cmp) -> DummyBTreeMapRawEntry<'_, K, V>
-    where Cmp: Fn(&K, &Q) -> std::cmp::Ordering
+    fn get_raw_entry<Q, Cmp>(
+        &mut self,
+        query: Q,
+        comparator: Cmp,
+    ) -> DummyBTreeMapRawEntry<'_, K, V>
+    where
+        Cmp: Fn(&K, &Q) -> std::cmp::Ordering,
     {
         todo!()
     }

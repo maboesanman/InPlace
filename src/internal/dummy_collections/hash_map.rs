@@ -14,7 +14,7 @@ pub struct DummyHashMap<K, V> {
 }
 
 /// Occupied entry of a HashMap.
-/// 
+///
 /// This entry can be used to read the key, mutate the value,
 /// or remove the key/value pair from the HashMap, without re-hashing.
 pub struct DummyHashMapOccupiedEntry<'c, K, V> {
@@ -22,7 +22,7 @@ pub struct DummyHashMapOccupiedEntry<'c, K, V> {
 }
 
 /// Vacant entry of a HashMap.
-/// 
+///
 /// This contains the key used to search for this entry,
 /// and can read that key, or insert into the HashMap at that key,
 /// when provided a value.
@@ -31,7 +31,7 @@ pub struct DummyHashMapVacantEntry<'c, K, V> {
 }
 
 /// Raw vacant entry of a HashMap.
-/// 
+///
 /// This is acquired from the `get_raw_entry` method, and can insert into
 /// the HashMap when provided a `(K, V)` tuple where K hashes to the hash used
 /// to aquire this entry. Inserting with a (K, V) tuple gives a `DummyHashMapOccupiedEntry`
@@ -179,7 +179,6 @@ impl<'c, K, V> VacantEntry<'c> for DummyHashMapRawVacantEntry<'c, K, V> {
 }
 
 impl<'c, K, V> DummyHashMapRawVacantEntry<'c, K, V> {
-
     /// elevate a raw vacant entry to a regular vacant entry by providing a key.
     fn occupy_key(self, key: K) -> DummyHashMapVacantEntry<'c, K, V> {
         todo!()
@@ -187,7 +186,6 @@ impl<'c, K, V> DummyHashMapRawVacantEntry<'c, K, V> {
 }
 
 impl<K, V> DummyHashMap<K, V> {
-
     /// get a raw entry for a given hash.
     fn get_raw_entry(&mut self, hash: u64) -> DummyHashMapRawEntry<'_, K, V> {
         todo!()

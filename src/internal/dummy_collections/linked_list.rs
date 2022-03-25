@@ -1,9 +1,12 @@
-use crate::{internal::{
-    entry::Entry,
-    get_entry::{GetEntryByKey, GetEntryFromKey},
-    occupied_entry::*,
-    vacant_entry::*,
-}, get_entry::{GetFirstEntry, GetLastEntry}};
+use crate::{
+    get_entry::{GetFirstEntry, GetLastEntry},
+    internal::{
+        entry::Entry,
+        get_entry::{GetEntryByKey, GetEntryFromKey},
+        occupied_entry::*,
+        vacant_entry::*,
+    },
+};
 
 use core::hash::Hash;
 use core::{borrow::Borrow, marker::PhantomData};
@@ -14,7 +17,7 @@ pub struct DummyLinkedList<V> {
 }
 
 /// Occupied entry of a LinkedList.
-/// 
+///
 /// This entry can be used to read the index, mutate the value, and remove.
 /// removing this entry gives an occupied entry representing the item that was to the right.
 /// if there was no item to the right, you get a vacant entry representing the end.
@@ -23,8 +26,8 @@ pub struct DummyLinkedListOccupiedEntry<'c, V> {
 }
 
 /// Vacant entry of a LinkedList.
-/// 
-/// This is either the beginning of the linked list, the end, or 
+///
+/// This is either the beginning of the linked list, the end, or
 pub struct DummyLinkedListVacantEntry<'c, V> {
     _map: &'c mut DummyLinkedList<V>,
 }
@@ -43,8 +46,7 @@ impl<V> DummyLinkedList<V> {
     }
 }
 
-impl<V> GetFirstEntry<V> for DummyLinkedList<V>
-{
+impl<V> GetFirstEntry<V> for DummyLinkedList<V> {
     type Occupied<'c> = DummyLinkedListOccupiedEntry<'c, V>
     where
         Self: 'c;
@@ -54,8 +56,7 @@ impl<V> GetFirstEntry<V> for DummyLinkedList<V>
     }
 }
 
-impl<V> GetLastEntry<V> for DummyLinkedList<V>
-{
+impl<V> GetLastEntry<V> for DummyLinkedList<V> {
     type Occupied<'c> = DummyLinkedListOccupiedEntry<'c, V>
     where
         Self: 'c;
@@ -127,7 +128,6 @@ impl<'c, V> EntryRemovableOccupiedEntry<'c> for DummyLinkedListOccupiedEntry<'c,
     }
 }
 
-
 impl<'c, V> NextOccupiedFromOccupied<'c> for DummyLinkedListOccupiedEntry<'c, V> {
     fn get_next_occupied(self) -> Option<Self> {
         todo!()
@@ -166,47 +166,38 @@ impl<'c, V> KeyedVacantEntry<'c> for DummyLinkedListVacantEntry<'c, V> {
     }
 }
 
-impl<'c, V> NextOccupiedFromVacant<'c> for DummyLinkedListVacantEntry<'c, V>
-{
+impl<'c, V> NextOccupiedFromVacant<'c> for DummyLinkedListVacantEntry<'c, V> {
     fn get_next_occupied(self) -> Option<Self::Occupied> {
         todo!()
     }
 }
 
-impl<'c, V> PrevOccupiedFromVacant<'c> for DummyLinkedListVacantEntry<'c, V>
-
-{
+impl<'c, V> PrevOccupiedFromVacant<'c> for DummyLinkedListVacantEntry<'c, V> {
     fn get_prev_occupied(self) -> Option<Self::Occupied> {
         todo!()
     }
 }
 
-impl<'c, V> DummyLinkedListOccupiedEntry<'c, V>
-{
+impl<'c, V> DummyLinkedListOccupiedEntry<'c, V> {
     fn get_next_entry(self) -> DummyLinkedListEntry<'c, V> {
         todo!()
     }
 }
 
-impl<'c, V> DummyLinkedListOccupiedEntry<'c, V>
-{
+impl<'c, V> DummyLinkedListOccupiedEntry<'c, V> {
     fn get_prev_entry(self) -> DummyLinkedListEntry<'c, V> {
         todo!()
     }
 }
 
-impl<'c, V> DummyLinkedListVacantEntry<'c, V>
-{
+impl<'c, V> DummyLinkedListVacantEntry<'c, V> {
     fn get_next_entry(self) -> Option<DummyLinkedListEntry<'c, V>> {
         todo!()
     }
 }
 
-
-impl<'c, V> DummyLinkedListVacantEntry<'c, V>
-{
+impl<'c, V> DummyLinkedListVacantEntry<'c, V> {
     fn get_prev_entry(self) -> Option<DummyLinkedListEntry<'c, V>> {
         todo!()
     }
 }
-

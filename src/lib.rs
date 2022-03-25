@@ -24,7 +24,7 @@ pub mod entry {
 }
 
 /// This module allows you to aquire entries from collections.
-/// 
+///
 /// This requires generic associated types.
 pub mod get_entry {
     use super::internal;

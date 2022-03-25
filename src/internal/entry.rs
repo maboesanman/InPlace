@@ -1,6 +1,7 @@
-
-
-use crate::entry::{NextOccupiedFromOccupied, NextOccupiedFromVacant, PrevOccupiedFromOccupied, PrevOccupiedFromVacant};
+use crate::entry::{
+    NextOccupiedFromOccupied, NextOccupiedFromVacant, PrevOccupiedFromOccupied,
+    PrevOccupiedFromVacant,
+};
 
 use super::{
     occupied_entry::{
@@ -34,14 +35,13 @@ impl<'c, 'e, Occ, Vac> Entry<Occ, Vac>
 where
     'c: 'e,
     Occ: KeyedOccupiedEntry<'c>,
-    Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ>,
-    &'e Vac::Key: Into<&'e Occ::Key>,
+    Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ, Key = Occ::Key>,
 {
     /// get a reference to the key this entry corresponds to.
     pub fn get_key(&'e self) -> &'e Occ::Key {
         match self {
             Entry::Occupied(e) => e.get_pair().0,
-            Entry::Vacant(e) => e.get_key().into(),
+            Entry::Vacant(e) => e.get_key(),
         }
     }
 }
@@ -53,7 +53,7 @@ where
     Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ>,
 {
     /// get a reference to the key and value of this entry, if it's occupied.
-    /// 
+    ///
     /// if it's not occupied, get a reference to the vacant key.
     pub fn get_pair(&'e self) -> Result<(&'e Occ::Key, &'e Occ::Value), &'e Vac::Key> {
         match self {
@@ -63,7 +63,7 @@ where
     }
 
     /// get an immutable reference to the key and a mutable reference to the value of this entry, if it's occupied.
-    /// 
+    ///
     /// if it's not occupied, get a reference to the vacant key.
     pub fn get_pair_mut(&'e mut self) -> Result<(&'e Occ::Key, &'e mut Occ::Value), &'e Vac::Key> {
         match self {
@@ -72,8 +72,8 @@ where
         }
     }
 
-    /// consume this entry and return a mutable reference to the value in the collection, 
-    /// 
+    /// consume this entry and return a mutable reference to the value in the collection,
+    ///
     /// if it's not occupied, get a vacant entry.
     pub fn into_pair(self) -> Result<(Occ::BorrowedKey, &'c mut Occ::Value), Vac> {
         match self {

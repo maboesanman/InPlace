@@ -84,6 +84,14 @@ pub trait RemovableOccupiedEntry<'c>: OccupiedEntry<'c> {
     fn remove_value(self) -> Self::Value {
         self.remove().0
     }
+
+    /// remove this entry, returning a value and a vacant entry.
+    fn vacate(self) -> (Self::Value, Self::Removed)
+    where
+        Self::Removed: VacantEntry<'c, Occupied = Self>,
+    {
+        self.remove()
+    }
 }
 
 /// A trait to represent recovering to an entry on removal.
@@ -111,7 +119,7 @@ pub trait InsertableOccupiedEntry<'c>: OccupiedEntry<'c> {
 ///
 /// They are only able to do so through a `replace_key` function, not a regular mutable reference,
 /// so the implementer can ensure that collection invariants still hold for the new key.
-pub trait OccupiedEntryKeyMut<'c>: KeyedOccupiedEntry<'c> {
+pub trait KeyMutableOccupiedEntry<'c>: KeyedOccupiedEntry<'c> {
     /// replace key with another one.
     ///
     /// the data structure's integrity is maintained. If the value would move in the collection

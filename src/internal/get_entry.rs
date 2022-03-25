@@ -39,10 +39,12 @@ pub trait GetEntryFromKey<K, V> {
 
 pub trait GetEntryByKey<K, V, Q>: GetEntryFromKey<K, V>
 where
-    K: Borrow<Q> + Eq + Clone,
+    K: Borrow<Q> + Eq,
     Q: Eq,
 {
-    fn get_entry<'c>(&'c mut self, key: &Q) -> Entry<Self::Occupied<'c>, Self::Vacant<'c>>;
+    fn get_entry<'c>(&'c mut self, key: &Q) -> Entry<Self::Occupied<'c>, Self::Vacant<'c>>
+    where
+        K: Clone;
 
     fn remove_entry<'c>(
         &'c mut self,
