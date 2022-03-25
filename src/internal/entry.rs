@@ -37,6 +37,7 @@ where
     Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ>,
     &'e Vac::Key: Into<&'e Occ::Key>,
 {
+    /// get a reference to the key this entry corresponds to.
     pub fn get_key(&'e self) -> &'e Occ::Key {
         match self {
             Entry::Occupied(e) => e.get_pair().0,
@@ -51,6 +52,9 @@ where
     Occ: KeyedOccupiedEntry<'c>,
     Vac: KeyedVacantEntry<'c, Value = Occ::Value, Occupied = Occ>,
 {
+    /// get a reference to the key and value of this entry, if it's occupied.
+    /// 
+    /// if it's not occupied, get a reference to the vacant key.
     pub fn get_pair(&'e self) -> Result<(&'e Occ::Key, &'e Occ::Value), &'e Vac::Key> {
         match self {
             Entry::Occupied(e) => Ok(e.get_pair()),
@@ -58,6 +62,9 @@ where
         }
     }
 
+    /// get an immutable reference to the key and a mutable reference to the value of this entry, if it's occupied.
+    /// 
+    /// if it's not occupied, get a reference to the vacant key.
     pub fn get_pair_mut(&'e mut self) -> Result<(&'e Occ::Key, &'e mut Occ::Value), &'e Vac::Key> {
         match self {
             Entry::Occupied(e) => Ok(e.get_pair_mut()),
@@ -65,6 +72,9 @@ where
         }
     }
 
+    /// consume this entry and return a mutable reference to the value in the collection, 
+    /// 
+    /// if it's not occupied, get a vacant entry.
     pub fn into_pair(self) -> Result<(Occ::BorrowedKey, &'c mut Occ::Value), Vac> {
         match self {
             Entry::Occupied(e) => Ok(e.into_pair()),
@@ -72,6 +82,7 @@ where
         }
     }
 
+    /// try to insert into the entry, returning a new entry, and a value if it was occupied.
     pub fn insert_into_entry(self, value: Occ::Value) -> (Self, Option<Occ::Value>) {
         let (occupied, old_value) = self.occupy(value);
         (Self::from_occupied(occupied), old_value)
@@ -90,10 +101,12 @@ where
         }
     }
 
+    /// returns true if the entry is occupied.
     pub fn is_occupied(&'e self) -> bool {
         matches!(self, Entry::Occupied(_))
     }
 
+    /// returns true if the entry is vacant.
     pub fn is_vacant(&'e self) -> bool {
         matches!(self, Entry::Vacant(_))
     }
@@ -105,6 +118,7 @@ impl<'c, Occ, Vac> Entry<Occ, Vac>
 where
     Occ: EntryRemovableOccupiedEntry<'c, Vacant = Vac>,
 {
+    /// remove this entry, returning a new entry. for keyed collections this will be vacant.
     pub fn remove_entry(self) -> (Self, Option<Occ::Value>) {
         match self {
             Entry::Occupied(occupied) => {
@@ -123,6 +137,7 @@ impl<'c, Occ, Vac> Entry<Occ, Vac>
 where
     Occ: RemovableOccupiedEntry<'c, Removed = Vac>,
 {
+    /// remove this entry, returning the newly vacated entry, and the value if it was occupied.
     pub fn vacate(self) -> (Vac, Option<Occ::Value>) {
         match self {
             Entry::Occupied(occupied) => {
@@ -142,6 +157,7 @@ where
     Occ: KeyedOccupiedEntry<'c>,
     Vac: KeyedVacantEntry<'c, Key = Occ::Key, Occupied = Occ>,
 {
+    /// remove the entry, and return an owned key, and an optional value, if it was occupied.
     pub fn remove_with_key(self) -> (Occ::Key, Option<Occ::Value>) {
         let (vacant, value) = self.vacate();
         (vacant.into_key(), value)
@@ -153,6 +169,8 @@ where
     Occ: InsertableOccupiedEntry<'c>,
     Vac: VacantEntry<'c, Occupied = Occ, Value = Occ::Value>,
 {
+    /// insert a new entry in this place.
+    /// if the entry is vacant, it will be filled. if it is not vacant, it will be inserted here.
     pub fn insert_new(self, value: Occ::Value) {
         self.occupy_new(value);
     }
